@@ -1,0 +1,118 @@
+<% extend('../layouts/dashboard_layout') %>
+
+    <div class="container">
+        <input type="search" name="" id="" class="mb-3 form-control" style="width:20%" placeholder="Search...">
+        <table class="table border border-secondary">
+            <thead class="thead-dark">
+                <tr>
+
+                    <th scope="col"> 時間 </th>
+                    <th scope="col"> 書 </th>
+                    <th scope="col"> 問題/回覆 </th>
+                    <th scope="col">
+                        <div class="dropdown ">
+                            <a class="bg-dark btn btn-sm btn-secondary border-0 dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                狀態
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                <a class="dropdown-item" href="#">未預約</a>
+                                <a class="dropdown-item" href="#">已售出</a>
+                                <a class="dropdown-item" href="#">已取消</a>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+
+                    <td>2019/5/11</td>
+                    <td>優秀的綿羊</td>
+                    <td><a href="/dashboard/qanda" target="_blank"><button class="btn btn-sm btn-outline-warning"> Go !
+                            </button></a> </td>
+                    <td class="text-info"> <b>未預約</b> </td>
+
+                </tr>
+                <tr>
+                    <td>2019/5/11</td>
+                    <td>被討厭的勇氣</td>
+                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
+                    <td class="text-danger"> <b>已售出</b> </td>
+
+                </tr>
+                <tr>
+                    <td>2019/5/11</td>
+                    <td>身為職業小說家</td>
+                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
+                    <td class="text-danger"> <b>已售出</b> </td>
+                </tr>
+                <tr>
+                    <td>2019/5/11</td>
+                    <td>真確</td>
+                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
+                    <td class="text-secondary"> <b>已取消</b> </td>
+                </tr>
+                <tr>
+                    <td>2019/5/11</td>
+                    <td>讓大象飛</td>
+                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
+                    <td class="text-info"> <b>未預約</b> </td>
+                </tr>
+                <tr>
+                    <td>2019/5/12</td>
+                    <td>寫你</td>
+                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
+                    <td class="text-info"> <b>未預約</b> </td>
+                </tr>
+                <tr>
+                    <td>2019/5/13</td>
+                    <td>讓大象飛</td>
+                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
+                    <td class="text-secondary"> <b>已取消</b> </td>
+                </tr>
+                <tr>
+                    <td>2019/5/15</td>
+                    <td>傾城之戀</td>
+                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
+                    <td class="text-danger"> <b>已售出</b> </td>
+                </tr>
+                <tr>
+                    <td>2019/5/11</td>
+                    <td>脆弱的力量</td>
+                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
+                    <td class="text-danger"> <b>已售出</b> </td>
+                </tr>
+                <tr>
+                    <td>2019/5/14</td>
+                    <td>孤獨六講</td>
+                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
+                    <td class="text-danger"> <b>已售出</b> </td>
+                </tr>
+            </tbody>
+        </table>
+        <nav class="mt-5" aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                </li>
+
+                <li class="page-item active">
+                    <a class="page-link" href="#">
+                        1
+                    </a>
+                </li>
+
+                <li class="page-item ">
+                    <a class="page-link" href="#">
+                        2
+                    </a>
+                </li>
+
+                <li class="page-item ">
+                    <a class="page-link" href="/?page=2">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+

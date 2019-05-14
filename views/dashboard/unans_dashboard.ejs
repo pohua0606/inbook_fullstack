@@ -1,0 +1,55 @@
+<% extend('../layouts/dashboard_layout') %>
+
+<!-- Question list -->
+<div class="row my-4 mx-5 justify-content-left">
+    <div class="col-md-7">
+        <div class="row">
+            <% for(var prop in question_list) { %>
+            <div class="col-12">
+                <div class="card mb-4 border border-secondary">
+                    <div class="card-body">
+                        <div class="d-flex flex-row text-secondary">
+                            <div class="p-2"><span class="fa fa-clock-o"></span><%- moment(question_list[prop].askTime * 1000).format('YYYY / MM / DD') %></div>
+                        </div>
+                        <div>
+                            <%-  striptags(question_list[prop].text_question).slice(0,149) %> ...
+                        </div>
+                        <div class="row justify-content-end mr-2">
+                            <a href="/dashboard/answer/<%- question_list[prop].uid %>" class="btn btn-sm btn-outline-secondary justify-content-end">回覆</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Books picture -->
+    <div class="col-md-5 d-flex justify-content-center">
+        <div class="card mb-4 border-0">
+            <div class="card-body py-5">
+                <img src="../images/slogan_1.png" alt="">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 做分頁 : Pagination -->
+<nav class="my-4" aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        <li class="page-item <% if(!page.hasPre){ %> disabled <% } %> ">
+            <a class="page-link" href="/dashboard/unans?page=<%- page.currentPage - 1 %>" tabindex="-1">Previous</a>
+        </li>
+
+        <% for(var i = 1; i < page.totalPages + 1; i++) { %>
+        <li class="page-item <% if(i == page.currentPage){ %> active <% } %> ">
+            <a class="page-link" href="/dashboard/unans?page=<%- i %>">
+                <%- i %>
+            </a>
+        </li>
+        <% } %>
+        <li class="page-item <% if(!page.hasNext){ %>disabled<% } %>">
+            <a class="page-link" href="/dashboard/unans?page=<%- page.currentPage + 1 %>">Next</a>
+        </li>
+    </ul>
+</nav>

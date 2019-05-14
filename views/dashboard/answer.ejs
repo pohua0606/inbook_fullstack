@@ -1,0 +1,44 @@
+<% extend('../layouts/question_layout') %>
+
+<% if (each_question === undefined){
+    var each_question = {}; 
+  } %>
+
+<div class="row my-4 mx-5 justify-content-left">
+    <div class="col-md-6 mt-1">
+        <div class="card mb-4 border border-secondary">
+            <div class="card-body">
+                <div class="d-flex flex-row text-secondary">
+                    <div class="p-2"><span class="fa fa-clock-o"></span> <%- moment(each_question.askTime * 1000).format('YYYY / MM / DD') %></div>
+                </div>
+                <div>
+                    <p>
+                        <%- each_question.text_question %>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Books picture -->
+    <div class="col-md-5">
+        <div class="row">
+            <form action="" method="post">
+                <div class="col-12">
+                    <div class="mb-2">回覆：</div>
+                    <div>
+                        <textarea class="" name="" id="" cols="64" rows="3" style="height:300px;"></textarea>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="my-3"> 推薦書：</div>
+                    <div class="d-flex flex-row justify-content-between">
+                        <input type="text" class="form-control border border-secondary border-top-0 border-left-0 border-right-0 bg-transparent"
+                            style="width:50%">
+                        <button type="submit" class="btn btn-outline-secondary"> 送出回覆 ! </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
