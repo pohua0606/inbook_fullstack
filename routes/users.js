@@ -38,7 +38,7 @@ router.post('/question/create', function(req, res, next){
   each_question.set({
     text_question : text_question,
     email : user_email,
-    id : key,
+    uid : key,
     answered : 'no',
     askTime :  Math.floor( Date.now()/1000)
   })
