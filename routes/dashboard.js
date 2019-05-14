@@ -76,9 +76,9 @@ router.get('/sell', function (req, res, next) {
 // 然後把這筆資料傳到 answer 頁面上
 
 router.get('/answer/:id', function (req, res, next) {
-    const id = req.params.id;
+    const uid = req.params.id;
     users_db.once('value').then(function (snapshot) {
-        return users_db.child(id).once('value');
+        return users_db.child(uid).once('value');
     }).then(function (snapshot) {
         const each_question = snapshot.val();
         res.render('dashboard/answer', {
@@ -92,9 +92,9 @@ router.get('/answer/:id', function (req, res, next) {
 
 // 問題查看 qanda
 router.get('/qanda/:id', function (req, res, next) {
-    const id = req.params.id;
+    const rid = req.params.id;
     responses_db.once('value').then(function (snapshot) {
-        return responses_db.child(id).once('value');
+        return responses_db.child(rid).once('value');
     }).then(function (snapshot) {
         const each_qanda = snapshot.val();
         console.log(each_qanda);
