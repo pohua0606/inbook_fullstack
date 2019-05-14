@@ -9,6 +9,9 @@ var responses_db = firebaseAdmin_DB.ref('responses');
 
 // 新問題 unans
 router.get('/unans', function (req, res, next) {
+
+    let currentPage = Number.parseInt(req.query.page) || 1;
+
     users_db.once('value').then(function (snapshot) {
         return users_db.orderByChild('askTime').once('value');
     }).then(function (snapshot) {
@@ -19,6 +22,38 @@ router.get('/unans', function (req, res, next) {
             }
         })
         question_list.reverse();
+
+
+        // 分頁
+        const totalResults = question_list.length;
+        const perpage = 3;
+        const totalPages = Math.ceil(totalResults / perpage);
+
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+
+        // 這一頁中第一筆，這一頁中最後一頁   
+        const minItem = (currentPage * perpage) - perpage + 1
+        const maxItem = (currentPage * perpage);
+
+        const page_question_list = [];
+
+        question_list.forEach(function (item, i) {
+            let itemNum = i + 1 // 因為預設是從 0 開始
+            if (itemNum >= minItem && itemNum <= maxItem) {
+                page_question_list.push(item);
+            }
+        })
+
+        const page = {
+            totalPages,
+            currentPage,
+            hasPre: currentPage > 1,
+            hasNext: currentPage < totalPages
+        }
+
+
         res.render('dashboard/unans_dashboard', {
             title: 'unans',
             active: 'unans',
@@ -88,6 +123,26 @@ router.get('/answer/:id', function (req, res, next) {
         });
     })
 
+});
+
+router.post('/answer/:id', function (req, res, next) {
+    const id = req.params.id;
+    var each_response = responses_db.push();
+    var response_key = each_response.key;
+    firebaseAdmin_DB.ref('users/' + id).once('value').then(snapshot => {
+        const text_question = snapshot.val().text_question;
+        each_response.set({
+            rid: response_key,
+            uid: id,
+            text_question: text_question,
+            text_answer: req.body.text_answer,
+            book: req.body.book,
+            status: 'no',
+            answerTime: Math.floor(Date.now() / 1000)
+        });
+    })
+
+    res.redirect('/dashboard/unans');
 });
 
 // 問題查看 qanda
