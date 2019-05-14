@@ -25,16 +25,18 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <% for (var prop in response_list) { %>
+                    <tr>
 
-                    <td>2019/5/11</td>
-                    <td>優秀的綿羊</td>
-                    <td><a href="/dashboard/qanda" target="_blank"><button class="btn btn-sm btn-outline-warning"> Go !
-                            </button></a> </td>
-                    <td class="text-info"> <b>未預約</b> </td>
+                        <td><%- moment(response_list[prop].answerTime * 1000).format('YYYY / MM / DD') %></td>
+                        <td><%- response_list[prop].book%></td>
+                        <td><a href="/dashboard/qanda/<%- response_list[prop].rid %>" target="_blank"><button class="btn btn-sm btn-outline-warning"> Go !
+                                </button></a> </td>
+                        <td class="text-info"> <b><%- response_list[prop].status %></b> </td>
 
-                </tr>
-                <tr>
+                    </tr>
+                <% } %>
+                <!-- <tr>
                     <td>2019/5/11</td>
                     <td>被討厭的勇氣</td>
                     <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
@@ -88,7 +90,7 @@
                     <td>孤獨六講</td>
                     <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
                     <td class="text-danger"> <b>已售出</b> </td>
-                </tr>
+                </tr> -->
             </tbody>
         </table>
         <nav class="mt-5" aria-label="Page navigation example">

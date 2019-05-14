@@ -5,10 +5,13 @@ var moment = require('moment');
 var striptags = require('striptags');
 
 var users_db = firebaseAdmin_DB.ref('users');
+var responses_db = firebaseAdmin_DB.ref('responses');
 
 // 新問題 unans
 router.get('/unans', function (req, res, next) {
+
     let currentPage = Number.parseInt(req.query.page) || 1;
+
     users_db.once('value').then(function (snapshot) {
         return users_db.orderByChild('askTime').once('value');
     }).then(function (snapshot) {
@@ -19,6 +22,7 @@ router.get('/unans', function (req, res, next) {
             }
         })
         question_list.reverse();
+
 
         // 分頁
         const totalResults = question_list.length;
@@ -49,17 +53,16 @@ router.get('/unans', function (req, res, next) {
             hasNext: currentPage < totalPages
         }
 
+
         res.render('dashboard/unans_dashboard', {
             title: 'unans',
             active: 'unans',
-            question_list: page_question_list,
-            page,
+            question_list,
             moment,
             striptags
-
         });
     })
-
+    
     // 把 users 物件，按照時間排序，然後用迴圈放到新的陣列裡面。
     // 到 ejs 上，將陣列用迴圈讀出呈現。
 
@@ -67,10 +70,22 @@ router.get('/unans', function (req, res, next) {
 
 // 歷史回覆 historical
 router.get('/historical', function (req, res, next) {
-    res.render('dashboard/historical_dashboard', {
-        title: 'historical',
-        active: 'historical'
-    });
+    responses_db.once('value').then(function (snapshot) {
+        return responses_db.orderByChild('responseTime').once('value');
+    }).then(function (snapshot) {
+        const response_list = [];
+        snapshot.forEach(function (snapshot_child) {
+            response_list.push(snapshot_child.val());
+        })
+        response_list.reverse();
+        console.log(response_list);
+        res.render('dashboard/historical_dashboard', {
+            title: 'historical',
+            active: 'historical',
+            response_list,
+            moment
+        });
+    })
 });
 
 // 預約查詢 reserved
@@ -107,6 +122,7 @@ router.get('/answer/:id', function (req, res, next) {
             moment
         });
     })
+
 });
 
 router.post('/answer/:id', function (req, res, next) {
@@ -130,11 +146,19 @@ router.post('/answer/:id', function (req, res, next) {
 });
 
 // 問題查看 qanda
-router.get('/qanda', function (req, res, next) {
-    res.render('dashboard/q_and_a', {
-        title: 'qanda',
-        moment
-    });
+router.get('/qanda/:id', function (req, res, next) {
+    const rid = req.params.id;
+    responses_db.once('value').then(function (snapshot) {
+        return responses_db.child(rid).once('value');
+    }).then(function (snapshot) {
+        const each_qanda = snapshot.val();
+        console.log(each_qanda);
+        res.render('dashboard/q_and_a', {
+            title: 'qanda',
+            each_qanda,
+            moment
+        });
+    })
 });
 
 
