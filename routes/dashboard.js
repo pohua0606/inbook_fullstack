@@ -13,6 +13,7 @@ router.get('/unans', function (req, res, next) {
     let currentPage = Number.parseInt(req.query.page) || 1;
 
     users_db.once('value').then(function (snapshot) {
+        
         return users_db.orderByChild('askTime').once('value');
     }).then(function (snapshot) {
         const question_list = [];
@@ -57,7 +58,8 @@ router.get('/unans', function (req, res, next) {
         res.render('dashboard/unans_dashboard', {
             title: 'unans',
             active: 'unans',
-            question_list,
+            question_list: page_question_list,
+            page,
             moment,
             striptags
         });
@@ -78,7 +80,7 @@ router.get('/historical', function (req, res, next) {
             response_list.push(snapshot_child.val());
         })
         response_list.reverse();
-        console.log(response_list);
+        
         res.render('dashboard/historical_dashboard', {
             title: 'historical',
             active: 'historical',
@@ -110,8 +112,8 @@ router.get('/sell', function (req, res, next) {
 // 所以在 get 的時候 依照路徑上的 id 去資料庫撈出對應的那筆資料 child()
 // 然後把這筆資料傳到 answer 頁面上
 
-router.get('/answer/:id', function (req, res, next) {
-    const uid = req.params.id;
+router.get('/answer/:uid', function (req, res, next) {
+    const uid = req.params.uid;
     users_db.once('value').then(function (snapshot) {
         return users_db.child(uid).once('value');
     }).then(function (snapshot) {
@@ -125,29 +127,35 @@ router.get('/answer/:id', function (req, res, next) {
 
 });
 
-router.post('/answer/:id', function (req, res, next) {
-    const id = req.params.id;
+router.post('/answer/:uid', function (req, res, next) {
+    
+    const uid = req.params.uid;
     var each_response = responses_db.push();
     var response_key = each_response.key;
-    firebaseAdmin_DB.ref('users/' + id).once('value').then(snapshot => {
+    
+    users_db.child(uid).update({
+        answered : 'yes'
+    })
+    
+    firebaseAdmin_DB.ref('users/' + uid).once('value').then(snapshot => {
         const text_question = snapshot.val().text_question;
         each_response.set({
             rid: response_key,
-            uid: id,
+            uid: uid,
             text_question: text_question,
             text_answer: req.body.text_answer,
             book: req.body.book,
             status: 'no',
             answerTime: Math.floor(Date.now() / 1000)
-        });
+        })
     })
 
     res.redirect('/dashboard/unans');
 });
 
 // 問題查看 qanda
-router.get('/qanda/:id', function (req, res, next) {
-    const rid = req.params.id;
+router.get('/qanda/:rid', function (req, res, next) {
+    const rid = req.params.rid;
     responses_db.once('value').then(function (snapshot) {
         return responses_db.child(rid).once('value');
     }).then(function (snapshot) {
