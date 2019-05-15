@@ -3,9 +3,12 @@ var router = express.Router();
 var firebaseAdmin_DB = require('../connections/firebase_admin');
 var moment = require('moment');
 var striptags = require('striptags');
+var nodemailer = require('nodemailer');
 
 var users_db = firebaseAdmin_DB.ref('users');
 var responses_db = firebaseAdmin_DB.ref('responses');
+
+
 
 // 新問題 unans
 router.get('/unans', function (req, res, next) {
@@ -70,7 +73,9 @@ router.get('/unans', function (req, res, next) {
 
 });
 
+
 // 歷史回覆 historical
+
 router.get('/historical', function (req, res, next) {
     responses_db.once('value').then(function (snapshot) {
         return responses_db.orderByChild('responseTime').once('value');
@@ -79,8 +84,7 @@ router.get('/historical', function (req, res, next) {
         snapshot.forEach(function (snapshot_child) {
             response_list.push(snapshot_child.val());
         })
-        response_list.reverse();
-        
+        response_list.reverse();   
         res.render('dashboard/historical_dashboard', {
             title: 'historical',
             active: 'historical',
@@ -90,12 +94,28 @@ router.get('/historical', function (req, res, next) {
     })
 });
 
-// 預約查詢 reserved
+
+// 預約查詢 reserved : 這邊只要把 status 是 reserved 的放到一個新的陣列就好
+
 router.get('/reserved', function (req, res, next) {
-    res.render('dashboard/reserved_dashboard', {
-        title: 'reserved',
-        active: 'reserved'
-    });
+    responses_db.once('value').then(function (snapshot) {
+        return responses_db.orderByChild('responseTime').once('value');
+    }).then(function (snapshot) {
+        const reserved_response_list = [];
+        snapshot.forEach(function (snapshot_child) {
+            if ('reserved' === snapshot_child.val().status) {
+                reserved_response_list.push(snapshot_child.val());
+            } 
+        })
+        reserved_response_list.reverse();  
+         
+        res.render('dashboard/reserved_dashboard', {
+            title: 'reserved',
+            active: 'reserved',
+            reserved_response_list,
+            moment
+        });
+    })
 });
 
 // 銷售紀錄 sell
@@ -106,7 +126,8 @@ router.get('/sell', function (req, res, next) {
     });
 });
 
-// 回覆 answer
+
+// Get 老闆回覆 answer
 
 // 先讓每一篇點 '回覆' 後的路徑把 id 跳上參數
 // 所以在 get 的時候 依照路徑上的 id 去資料庫撈出對應的那筆資料 child()
@@ -127,6 +148,9 @@ router.get('/answer/:uid', function (req, res, next) {
 
 });
 
+
+// Post 老闆回覆
+
 router.post('/answer/:uid', function (req, res, next) {
     
     const uid = req.params.uid;
@@ -139,6 +163,9 @@ router.post('/answer/:uid', function (req, res, next) {
     
     firebaseAdmin_DB.ref('users/' + uid).once('value').then(snapshot => {
         const text_question = snapshot.val().text_question;
+        const Serial_number = snapshot.val().Serial_number;
+        const user_email = snapshot.val().email ;
+        
         each_response.set({
             rid: response_key,
             uid: uid,
@@ -146,14 +173,44 @@ router.post('/answer/:uid', function (req, res, next) {
             text_answer: req.body.text_answer,
             book: req.body.book,
             status: 'no',
-            answerTime: Math.floor(Date.now() / 1000)
+            answerTime: Math.floor(Date.now() / 1000),
+            reserved_deadline: Math.floor( (Date.now() / 1000) + (86400 * 3)),
+            Serial_number: Serial_number
+        })
+        
+        var transporter = nodemailer.createTransport({
+            service : 'Gmail',
+            auth: {
+                user : 'inbookinbook@gmail.com',
+                pass : 'KenJerryAaronJimmy'
+            }
+        });
+        
+        // var reserved_deadline = Math.floor( (Date.now() / 1000) + (86400 * 3)).toLocaleString('ch', { timeZone: 'UTC' }) ;
+        var boss_answer = req.body.text_answer;
+        var default_answer = 
+        '<br><br>謝謝你願意傾聽自己，將自己的想法書寫下來，<br>在面對生活的難題時，能真正解決問題的，<br>不是書裡，而是梳理。<br>我們準備了一本好書給你，期待陪你踏上這趟旅程。<br>'
+        var full_answer = boss_answer + '<br>' + default_answer + '<br>';
+
+        var mailOptions = {
+            from : '書裡 | 梳理 <inbookinbook>',
+            to : user_email,
+            subject : '書裡回覆你的問題了',
+            html: `<p>${full_answer}<a href="http://localhost:3000/users/inbook">預約本書</a></p>`
+        };
+
+        transporter.sendMail(mailOptions, function(error, info){
+            if(error){
+                console.log(error);
+            }
         })
     })
-
     res.redirect('/dashboard/unans');
 });
 
+
 // 問題查看 qanda
+
 router.get('/qanda/:rid', function (req, res, next) {
     const rid = req.params.rid;
     responses_db.once('value').then(function (snapshot) {

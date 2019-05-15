@@ -14,152 +14,23 @@
                     <th scope="col"> 問題/回覆 </th>
                 </tr>
             </thead>
+            
             <tbody>
+                <% for(var prop in reserved_response_list) { %>
                 <tr>
-                    <th scope="row">-12345</th>
-                    <td>2019/5/11</td>
-                    <td> 2019/5/14 </td>
-                    <td>優秀的綿羊</td>
-                    <td class="text-success"> <b>reserved</b> </td>
+                    <th scope="row"> - <%- reserved_response_list[prop].Serial_number %> </th>
+                    <td> <%- moment(reserved_response_list[prop].answerTime * 1000).format('YYYY / MM / DD') %> </td>
+                    <td> <%- moment(reserved_response_list[prop].reserved_deadline * 1000).format('YYYY / MM / DD') %> </td>
+                    <td> <%- reserved_response_list[prop].book %> </td>
+                    <td class="text-success"> <b><%- reserved_response_list[prop].status %></b> </td>
                     <td><button class="btn btn-sm btn-outline-warning" data-toggle="modal" data-target="#checkout1">賣出
                         </button></td>
-                    <td><a href="/dashboard/qanda" target="_blank"><button class="btn btn-sm btn-outline-warning"> Go ! </button></a></td>
+                    <td><a href="/dashboard/qanda/<%- reserved_response_list[prop].rid %>" target="_blank"><button class="btn btn-sm btn-outline-warning"> Go ! </button></a></td>
                 </tr>
-
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>寫你</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><a href="/dashboard/qanda"><button class="btn btn-sm btn-outline-warning"> Go ! </button></a> </td>
-                </tr>
-                <tr>
-                    <th scope="row">-123456</th>
-                    <td>2019/5/14</td>
-                    <td> 2019/5/17 </td>
-                    <td>分身</td>
-                    <td class="text-success"><b>reserved</b> </td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-123456</th>
-                    <td>2019/5/14</td>
-                    <td> 2019/5/17 </td>
-                    <td>你要如何衡量你的人生？</td>
-                    <td class="text-success"><b>reserved</b> </td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-123456</th>
-                    <td>2019/5/14</td>
-                    <td> 2019/5/17 </td>
-                    <td>被討厭的勇氣</td>
-                    <td class="text-success"> <b>reserved</b> </td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>讓大象飛</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>身為職業小說家</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>經濟學的40堂公開課</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>真確</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>獲利世代</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>賈伯斯傳</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>本質思考</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>異鄉人</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>成長駭客</td>
-
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-
+                <% } %>
             </tbody>
         </table>
+    
     </div>
 
     <!-- Modal1 -->

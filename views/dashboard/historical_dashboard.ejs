@@ -17,6 +17,7 @@
                             </a>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                 <a class="dropdown-item" href="#">未預約</a>
+                                <a class="dropdown-item" href="#">已預約</a>
                                 <a class="dropdown-item" href="#">已售出</a>
                                 <a class="dropdown-item" href="#">已取消</a>
                             </div>
@@ -27,70 +28,19 @@
             <tbody>
                 <% for (var prop in response_list) { %>
                     <tr>
-
                         <td><%- moment(response_list[prop].answerTime * 1000).format('YYYY / MM / DD') %></td>
                         <td><%- response_list[prop].book%></td>
                         <td><a href="/dashboard/qanda/<%- response_list[prop].rid %>" target="_blank"><button class="btn btn-sm btn-outline-warning"> Go !
                                 </button></a> </td>
-                        <td class="text-info"> <b><%- response_list[prop].status %></b> </td>
+                        <td class="<% if(response_list[prop].status == 'no') { %> text-info <% } %> 
+                                <% if(response_list[prop].status == 'canceled' ) { %> text-secondary <% } %>
+                                <% if(response_list[prop].status == 'reserved' ) { %> text-success <% } %> 
+                                <% if(response_list[prop].status == 'sold') { %> text-danger <% } %> "> 
+                                <b><%- response_list[prop].status %></b> 
+                        </td>
 
                     </tr>
                 <% } %>
-                <!-- <tr>
-                    <td>2019/5/11</td>
-                    <td>被討厭的勇氣</td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                    <td class="text-danger"> <b>已售出</b> </td>
-
-                </tr>
-                <tr>
-                    <td>2019/5/11</td>
-                    <td>身為職業小說家</td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                    <td class="text-danger"> <b>已售出</b> </td>
-                </tr>
-                <tr>
-                    <td>2019/5/11</td>
-                    <td>真確</td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                    <td class="text-secondary"> <b>已取消</b> </td>
-                </tr>
-                <tr>
-                    <td>2019/5/11</td>
-                    <td>讓大象飛</td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                    <td class="text-info"> <b>未預約</b> </td>
-                </tr>
-                <tr>
-                    <td>2019/5/12</td>
-                    <td>寫你</td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                    <td class="text-info"> <b>未預約</b> </td>
-                </tr>
-                <tr>
-                    <td>2019/5/13</td>
-                    <td>讓大象飛</td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                    <td class="text-secondary"> <b>已取消</b> </td>
-                </tr>
-                <tr>
-                    <td>2019/5/15</td>
-                    <td>傾城之戀</td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                    <td class="text-danger"> <b>已售出</b> </td>
-                </tr>
-                <tr>
-                    <td>2019/5/11</td>
-                    <td>脆弱的力量</td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                    <td class="text-danger"> <b>已售出</b> </td>
-                </tr>
-                <tr>
-                    <td>2019/5/14</td>
-                    <td>孤獨六講</td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                    <td class="text-danger"> <b>已售出</b> </td>
-                </tr> -->
             </tbody>
         </table>
         <nav class="mt-5" aria-label="Page navigation example">

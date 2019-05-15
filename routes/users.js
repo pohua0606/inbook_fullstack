@@ -25,7 +25,9 @@ router.post('/question/create', function(req, res, next){
   
   // 開啟 firebase
   firebaseAdmin_DB.ref('Serial_number').once('value').then((snapshot) => {
+    
     var Serial_number = snapshot.val();
+    
     // firebaseAdmin_DB  
     var each_question = users_db.push();
     var key = each_question.key;
@@ -33,9 +35,6 @@ router.post('/question/create', function(req, res, next){
     // Form post
     var text_question = req.body.text_question;
     var user_email = req.body.user_email;
-
-    // 
-    req.body.id = key;
 
     // Set data from form to db
     each_question.set({
@@ -46,6 +45,7 @@ router.post('/question/create', function(req, res, next){
       askTime: Math.floor(Date.now() / 1000),
       Serial_number: Serial_number
     })
+    
     // 序號 + 1
     Serial_number = Serial_number + 1;
 
