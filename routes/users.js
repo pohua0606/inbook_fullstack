@@ -1,33 +1,54 @@
 var express = require('express');
 var router = express.Router();
 var firebaseAdmin_DB = require('../connections/firebase_admin');
-var users_db = firebaseAdmin_DB.ref('users'); 
-
+var users_db = firebaseAdmin_DB.ref('users');
+var responses_db = firebaseAdmin_DB.ref('responses');
+var moment = require('moment');
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   res.send('respond with a resource');
 });
 
 // user - inbook
-router.get('/inbook', function(req, res, next) {
+router.get('/inbook', function (req, res, next) {
   res.render('users/user');
 });
 
 // user - feedback
-router.get('/feedback', function(req, res, next) {
+router.get('/feedback', function (req, res, next) {
   res.render('users/feedback');
 });
 
 
+// user - confirm to reserve
+router.get('/confirm/:rid', function (req, res, next) {
+
+  const rid = req.params.rid;
+
+  responses_db.child(rid).update({
+    status: 'reserved'
+  })
+
+  responses_db.child(rid).once('value').then(function (snapshot) {
+    const reserved_deadline = snapshot.val().reserved_deadline;
+    res.render('users/confirm', {
+      reserved_deadline,
+      moment
+    });
+  })
+});
+
+
+
 // user 表單 POST : user - inbook
-router.post('/question/create', function(req, res, next){
-  
+router.post('/question/create', function (req, res, next) {
+
   // 開啟 firebase
   firebaseAdmin_DB.ref('Serial_number').once('value').then((snapshot) => {
-    
+
     var Serial_number = snapshot.val();
-    
+
     // firebaseAdmin_DB  
     var each_question = users_db.push();
     var key = each_question.key;
@@ -45,7 +66,7 @@ router.post('/question/create', function(req, res, next){
       askTime: Math.floor(Date.now() / 1000),
       Serial_number: Serial_number
     })
-    
+
     // 序號 + 1
     Serial_number = Serial_number + 1;
 

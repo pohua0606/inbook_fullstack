@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>書裡 Inbook</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+        crossorigin="anonymous">
+</head>
+
+<style>
+    .bg-theme{
+        background-color: #f4f4f4;
+    }
+
+    .word-color{
+        color:#4f4f4f;
+    }
+
+    @media(max-width:1440px) and (min-width:425px) {
+        #logo{
+            width: 9%;
+            margin-top: 8%;
+        }
+        #q_form{
+            width: 40%;
+        }
+
+        #user_email{
+            width:140%;
+        }
+    }
+
+    /* Iphone 6, 7, 8 PLUS */
+    @media(max-width:425px) and (min-width:375px) {
+        #logo{
+            width:40% ;
+            margin-top: 18%;
+        }
+        
+        #q_form{
+            width: 85%;
+        }
+
+        #q_form textarea{
+            height: 250px;
+        }
+
+        .label_text{
+            font-size: 1.6rem
+        }
+
+        #user_email{
+            width:110%;
+        }
+    }
+
+    /* Iphone 6, 7, 8 */
+    @media(max-width:375px) and (min-width:320px){
+        #logo{
+            width:38%;
+            margin-top: 15%;
+        }
+        
+        #q_form{
+            width: 85%;
+        }
+
+        #q_form textarea{
+            height: 250px;
+        }
+
+        .label_text{
+            font-size: 1.2rem
+        }
+
+        #user_email{
+            width:90%;
+        }
+    }
+
+    /* iphone 5 */
+    @media(max-width:320px){
+        #logo{
+            width:46%;
+            margin-top: 15%;
+        }
+        
+        #q_form{
+            width: 85%;
+        }
+
+        #q_form textarea{
+            height: 230px;
+        }
+
+        .label_text{
+            font-size: 1rem
+        }
+
+        #user_email{
+            width:80%;
+        }
+    }
+
+</style>
+
+<body>
+    <div class="container-fluid bg-theme" style=" height:1000px;">
+        <div class="d-flex justify-content-center">
+            <img id="logo" src="/images/logo_with_pic2.png" alt="inbook" style="height:50%; ">
+        </div>
+
+        <!-- 這邊的 textarea 輸入框 是否要用編輯器，才比較好呈現 html 格式 -->
+        <div class="d-flex justify-content-center mt-5 word-color">
+            confirmed!
+            請在 <%- moment(reserved_deadline * 1000).format('YYYY / MM / DD') %> 前來領取呦！
+        </div>
+    </div>
+
+    <footer>
+
+    </footer>
+
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -4,6 +4,7 @@ var firebaseAdmin_DB = require('../connections/firebase_admin');
 var moment = require('moment');
 var striptags = require('striptags');
 var nodemailer = require('nodemailer');
+var moment = require('moment');
 
 var users_db = firebaseAdmin_DB.ref('users');
 var responses_db = firebaseAdmin_DB.ref('responses');
@@ -12,7 +13,7 @@ var responses_db = firebaseAdmin_DB.ref('responses');
 
 // 新問題 unans
 router.get('/unans', function (req, res, next) {
-
+    
     let currentPage = Number.parseInt(req.query.page) || 1;
 
     users_db.once('value').then(function (snapshot) {
@@ -150,7 +151,6 @@ router.get('/answer/:uid', function (req, res, next) {
 
 
 // Post 老闆回覆
-
 router.post('/answer/:uid', function (req, res, next) {
     
     const uid = req.params.uid;
@@ -174,7 +174,7 @@ router.post('/answer/:uid', function (req, res, next) {
             book: req.body.book,
             status: 'no',
             answerTime: Math.floor(Date.now() / 1000),
-            reserved_deadline: Math.floor( (Date.now() / 1000) + (86400 * 3)),
+            reserved_deadline: Math.floor((Date.now() / 1000) + (86400 * 3)),
             Serial_number: Serial_number
         })
         
@@ -185,18 +185,17 @@ router.post('/answer/:uid', function (req, res, next) {
                 pass : 'KenJerryAaronJimmy'
             }
         });
-        
-        // var reserved_deadline = Math.floor( (Date.now() / 1000) + (86400 * 3)).toLocaleString('ch', { timeZone: 'UTC' }) ;
+        var reserved_deadline_email = moment().add(3, 'days').format('YYYY / MM / DD');
         var boss_answer = req.body.text_answer;
         var default_answer = 
         '<br><br>謝謝你願意傾聽自己，將自己的想法書寫下來，<br>在面對生活的難題時，能真正解決問題的，<br>不是書裡，而是梳理。<br>我們準備了一本好書給你，期待陪你踏上這趟旅程。<br>'
         var full_answer = boss_answer + '<br>' + default_answer + '<br>';
 
         var mailOptions = {
-            from : '書裡 | 梳理 <inbookinbook>',
+            from : '書裡 | inbook <inbookinbook>',
             to : user_email,
             subject : '書裡回覆你的問題了',
-            html: `<p>${full_answer}<a href="http://localhost:3000/users/inbook">預約本書</a></p>`
+            html: `<p>${full_answer}請點擊：<a href="http://localhost:3000/users/confirm/${response_key}">確認預約本書</a>，在${reserved_deadline_email}前來，開啟這趟自我探索的旅途。</p>`
         };
 
         transporter.sendMail(mailOptions, function(error, info){
