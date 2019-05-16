@@ -5,7 +5,6 @@ var moment = require('moment');
 var striptags = require('striptags');
 var nodemailer = require('nodemailer');
 var moment = require('moment');
-
 var users_db = firebaseAdmin_DB.ref('users');
 var responses_db = firebaseAdmin_DB.ref('responses');
 
@@ -26,7 +25,7 @@ router.get('/unans', function (req, res, next) {
                 question_list.push(snapshot_child.val());
             }
         })
-        question_list.reverse();
+        // question_list.reverse();
 
 
         // 分頁
@@ -109,22 +108,71 @@ router.get('/reserved', function (req, res, next) {
             } 
         })
         reserved_response_list.reverse();  
-         
+        const search_result = req.flash('search_result')[0];
+        
         res.render('dashboard/reserved_dashboard', {
             title: 'reserved',
             active: 'reserved',
             reserved_response_list,
-            moment
+            moment,
+            search_result,
         });
     })
 });
 
+// Search in reserved
+router.get('/reserved/search', function (req, res, next) {
+    const Serial_number = Number.parseInt(req.query.Serial_number) ;
+    
+    responses_db.orderByChild('Serial_number').equalTo(Serial_number)
+    .once('value', function(snapshot){
+        if('reserved' === Object.values(snapshot.val())[0].status){
+            var search_result = Object.values(snapshot.val())[0];
+        }
+        if(search_result){
+            req.flash('search_result', search_result);
+        }
+        res.redirect('/dashboard/reserved')
+    })
+    
+    // 錯誤頁面跳回原來頁面
+       
+
+});
+// Modal sell to add price  
+router.post('/reserved/:rid', function(req, res, next){
+    const rid = req.params.rid ;
+    var price = req.body.price ;
+     
+    responses_db.child(rid).update({
+        sold_time : Math.floor(Date.now() / 1000),
+        price : price,
+        status : 'sold'
+    })
+    res.redirect('/dashboard/reserved')
+})
+
+
 // 銷售紀錄 sell
-router.get('/sell', function (req, res, next) {
-    res.render('dashboard/sell_dashboard', {
-        title: 'sell',
-        active: 'sell'
-    });
+router.get('/sold', function (req, res, next) {
+    responses_db.once('value').then(function (snapshot) {
+        return responses_db.orderByChild('responseTime').once('value');
+    }).then(function (snapshot) {
+        const sold_response_list = [];
+        snapshot.forEach(function (snapshot_child) {
+            if ('sold' === snapshot_child.val().status) {
+                sold_response_list.push(snapshot_child.val());
+            } 
+        })
+        sold_response_list.reverse();  
+    
+        res.render('dashboard/sell_dashboard', {
+            title: 'sold',
+            active: 'sold',
+            sold_response_list,
+            moment
+        });
+    })
 });
 
 
