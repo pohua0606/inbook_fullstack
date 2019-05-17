@@ -190,10 +190,17 @@ router.get('/reserved', function (req, res, next) {
         return responses_db.orderByChild('responseTime').once('value');
     }).then(function (snapshot) {
         const reserved_response_list = [];
+        var datenow = Math.floor(Date.now() / 1000)
+        console.log(datenow);
         snapshot.forEach(function (snapshot_child) {
             if ('reserved' === snapshot_child.val().status) {
-                reserved_response_list.push(snapshot_child.val());
-            }
+
+               
+                if (datenow < snapshot_child.val().reserved_deadline){
+                    reserved_response_list.push(snapshot_child.val());
+                }
+            } 
+
         })
         reserved_response_list.reverse();
         const search_result = req.flash('search_result')[0];
