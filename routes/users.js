@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var firebaseAdmin_DB = require('../connections/firebase_admin');
+var csrfProtection = require("../connections/csurf");
 var users_db = firebaseAdmin_DB.ref('users');
 var responses_db = firebaseAdmin_DB.ref('responses');
 var moment = require('moment');
@@ -11,8 +12,8 @@ router.get('/', function (req, res, next) {
 });
 
 // user - inbook
-router.get('/inbook', function (req, res, next) {
-  res.render('users/user');
+router.get('/inbook',csrfProtection,function (req, res, next) {
+  res.render('users/user',{ csrfToken: req.csrfToken() });
 });
 
 // user - feedback
@@ -42,7 +43,7 @@ router.get('/confirm/:rid', function (req, res, next) {
 
 
 // user 表單 POST : user - inbook
-router.post('/question/create', function (req, res, next) {
+router.post('/question/create',csrfProtection, function (req, res, next) {
 
   // 開啟 firebase
   firebaseAdmin_DB.ref('Serial_number').once('value').then((snapshot) => {

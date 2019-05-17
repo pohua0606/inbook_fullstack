@@ -75,11 +75,12 @@ router.get('/unans', function (req, res, next) {
 
 
 // 歷史回覆 historical
-
+//小改
 router.get('/historical', function (req, res, next) {
-    responses_db.once('value').then(function (snapshot) {
-        return responses_db.orderByChild('responseTime').once('value');
-    }).then(function (snapshot) {
+    responses_db.orderByChild('responseTime').once('value')
+    // .then(function (snapshot) {
+    //     return responses_db.orderByChild('responseTime').once('value');
+    .then(function (snapshot) {
         const response_list = [];
         snapshot.forEach(function (snapshot_child) {
             response_list.push(snapshot_child.val());

@@ -116,6 +116,8 @@
         <!-- 這邊的 textarea 輸入框 是否要用編輯器，才比較好呈現 html 格式 -->
         <div class="d-flex justify-content-center mt-5 word-color">
             <form action="/users/question/create" method="POST" id="q_form">
+                <!-- csrf -->
+                <input type="hidden" name="_csrf" value="<%=csrfToken%>">
                 <div class="form-group">
                     <label class="label_text" for="question_area"> 梳理心情： </label>
                     <textarea name="text_question" class="form-control bg-transparent border-secondary mt-2" id="question_area" rows="10"></textarea>
