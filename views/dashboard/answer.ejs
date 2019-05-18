@@ -26,6 +26,7 @@
     <div class="col-md-5">
         <div class="row">
             <form action="/dashboard/answer/<%- each_question.uid %>" method="post">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div class="col-12">
                     <div class="mb-2">回覆：</div>
                     <div>

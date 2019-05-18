@@ -40,7 +40,7 @@
                         <%- search_result.status %></b>
                 </td>
                 <td>
-                    <button class="btn btn-sm btn-outline-warning" data-toggle="modal" data-target="#checkout1">賣出
+                    <button class="btn btn-sm btn-outline-warning" data-toggle="modal" data-target="#<%- search_result.rid %>">賣出
                     </button>
                 </td>
                 <td>
@@ -83,7 +83,7 @@
                 </td>
                 <td class="text-success"> <b>
                         <%- reserved_response_list[prop].status %></b> </td>
-                <td><button class="btn btn-sm btn-outline-warning" data-toggle="modal" data-target="#checkout1">賣出
+                <td><button class="btn btn-sm btn-outline-warning" data-toggle="modal" data-target="#<%- reserved_response_list[prop].rid %>">賣出
                     </button></td>
                 <td><a href="/dashboard/qanda/<%- reserved_response_list[prop].rid %>" target="_blank"><button class="btn btn-sm btn-outline-warning">
                             Go ! </button></a></td>
@@ -96,7 +96,7 @@
 
 <!-- Modal1 -->
 <% for(var prop in reserved_response_list) { %>
-<div class="modal fade bd-example-modal-lg" id="checkout1" tabindex="-1" role="dialog" aria-labelledby="checkout1Title"
+<div class="modal fade bd-example-modal-lg" id="<%- reserved_response_list[prop].rid %>" tabindex="-1" role="dialog" aria-labelledby="checkout1Title"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">

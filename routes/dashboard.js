@@ -7,7 +7,8 @@ var nodemailer = require('nodemailer');
 var moment = require('moment');
 var users_db = firebaseAdmin_DB.ref('users');
 var responses_db = firebaseAdmin_DB.ref('responses');
-
+var csrf = require('csurf');
+var csrfProtection = csrf({ cookie:true });
 
 
 // 新問題 unans
@@ -15,8 +16,7 @@ router.get('/unans', function (req, res, next) {
     
     let currentPage = Number.parseInt(req.query.page) || 1;
 
-    users_db.once('value').then(function (snapshot) {
-        
+    users_db.once('value').then(function (snapshot) {    
         return users_db.orderByChild('askTime').once('value');
     }).then(function (snapshot) {
         const question_list = [];
@@ -57,7 +57,6 @@ router.get('/unans', function (req, res, next) {
             hasNext: currentPage < totalPages
         }
 
-
         res.render('dashboard/unans_dashboard', {
             title: 'unans',
             active: 'unans',
@@ -67,7 +66,6 @@ router.get('/unans', function (req, res, next) {
             striptags
         });
     })
-    
     // 把 users 物件，按照時間排序，然後用迴圈放到新的陣列裡面。
     // 到 ejs 上，將陣列用迴圈讀出呈現。
 
@@ -77,39 +75,60 @@ router.get('/unans', function (req, res, next) {
 // 歷史回覆 historical
 
 router.get('/historical', function (req, res, next) {
+    const status = req.query.status || 'all';
+    // 抓 route 的query 參數
+    // 如果沒有 query 參數就把狀態參數命名成 all
     responses_db.once('value').then(function (snapshot) {
         return responses_db.orderByChild('responseTime').once('value');
     }).then(function (snapshot) {
         const response_list = [];
         snapshot.forEach(function (snapshot_child) {
-            response_list.push(snapshot_child.val());
+            // 對應 query 抓的狀態參數與資料庫中每筆資料的 status
+            if(snapshot_child.val().status === status){
+                response_list.push(snapshot_child.val());
+            }
+            // 如果沒有 query 參數就把狀態參數 all 
+            // 把全部資料都丟到 list 中
+            else if(status == 'all'){
+                response_list.push(snapshot_child.val());
+            }
         })
+        
         response_list.reverse();   
+        
         res.render('dashboard/historical_dashboard', {
             title: 'historical',
             active: 'historical',
-            response_list,
+            response_list,   
             moment
         });
     })
 });
 
 
-// 預約查詢 reserved : 這邊只要把 status 是 reserved 的放到一個新的陣列就好
 
+// 預約查詢 reserved : 這邊只要把 status 是 reserved 的放到一個新的陣列就好
 router.get('/reserved', function (req, res, next) {
     responses_db.once('value').then(function (snapshot) {
         return responses_db.orderByChild('responseTime').once('value');
     }).then(function (snapshot) {
         const reserved_response_list = [];
         snapshot.forEach(function (snapshot_child) {
+            
+            // deadline 逾期自動化 跳掉 canceled
+            if(Math.floor((Date.now() / 1000)) > snapshot_child.val().reserved_deadline)
+            {
+                responses_db.child(snapshot_child.val().rid).update({
+                    status : 'canceled'
+                })
+            }
             if ('reserved' === snapshot_child.val().status) {
                 reserved_response_list.push(snapshot_child.val());
             } 
         })
         reserved_response_list.reverse();  
         const search_result = req.flash('search_result')[0];
-        
+
         res.render('dashboard/reserved_dashboard', {
             title: 'reserved',
             active: 'reserved',
@@ -123,7 +142,6 @@ router.get('/reserved', function (req, res, next) {
 // Search in reserved
 router.get('/reserved/search', function (req, res, next) {
     const Serial_number = Number.parseInt(req.query.Serial_number) ;
-    
     responses_db.orderByChild('Serial_number').equalTo(Serial_number)
     .once('value', function(snapshot){
         if('reserved' === Object.values(snapshot.val())[0].status){
@@ -182,7 +200,7 @@ router.get('/sold', function (req, res, next) {
 // 所以在 get 的時候 依照路徑上的 id 去資料庫撈出對應的那筆資料 child()
 // 然後把這筆資料傳到 answer 頁面上
 
-router.get('/answer/:uid', function (req, res, next) {
+router.get('/answer/:uid', csrfProtection, function (req, res, next) {
     const uid = req.params.uid;
     users_db.once('value').then(function (snapshot) {
         return users_db.child(uid).once('value');
@@ -191,7 +209,8 @@ router.get('/answer/:uid', function (req, res, next) {
         res.render('dashboard/answer', {
             title: 'answer',
             each_question,
-            moment
+            moment,
+            csrfToken: req.csrfToken()
         });
     })
 
@@ -199,7 +218,7 @@ router.get('/answer/:uid', function (req, res, next) {
 
 
 // Post 老闆回覆
-router.post('/answer/:uid', function (req, res, next) {
+router.post('/answer/:uid', csrfProtection, function (req, res, next) {
     
     const uid = req.params.uid;
     var each_response = responses_db.push();
@@ -264,7 +283,7 @@ router.get('/qanda/:rid', function (req, res, next) {
         return responses_db.child(rid).once('value');
     }).then(function (snapshot) {
         const each_qanda = snapshot.val();
-        console.log(each_qanda);
+        
         res.render('dashboard/q_and_a', {
             title: 'qanda',
             each_qanda,
