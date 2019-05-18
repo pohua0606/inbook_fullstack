@@ -15,7 +15,6 @@ var csrfProtection = csrf({ cookie:true });
 router.get('/unans', function (req, res, next) {
     
     let currentPage = Number.parseInt(req.query.page) || 1;
-
     users_db.once('value').then(function (snapshot) {    
         return users_db.orderByChild('askTime').once('value');
     }).then(function (snapshot) {
@@ -75,6 +74,8 @@ router.get('/unans', function (req, res, next) {
 // 歷史回覆 historical
 
 router.get('/historical', function (req, res, next) {
+    
+    let currentPage = Number.parseInt(req.query.page) || 1;
     const status = req.query.status || 'all';
     // 抓 route 的query 參數
     // 如果沒有 query 參數就把狀態參數命名成 all
@@ -96,11 +97,41 @@ router.get('/historical', function (req, res, next) {
         
         response_list.reverse();   
         
+        // 分頁
+        const totalResults = response_list.length;
+        const perpage = 10;
+        const totalPages = Math.ceil(totalResults / perpage);
+
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+
+        // 這一頁中第一筆，這一頁中最後一頁   
+        const minItem = (currentPage * perpage) - perpage + 1
+        const maxItem = (currentPage * perpage);
+
+        const page_response_list = [];
+
+        response_list.forEach(function (item, i) {
+            let itemNum = i + 1 // 因為預設是從 0 開始
+            if (itemNum >= minItem && itemNum <= maxItem) {
+                page_response_list.push(item);
+            }
+        })
+
+        const page = {
+            totalPages,
+            currentPage,
+            hasPre: currentPage > 1,
+            hasNext: currentPage < totalPages
+        }
+
         res.render('dashboard/historical_dashboard', {
             title: 'historical',
             active: 'historical',
-            response_list,   
-            moment
+            response_list: page_response_list, 
+            moment,
+            page
         });
     })
 });
@@ -157,6 +188,7 @@ router.get('/reserved/search', function (req, res, next) {
        
 
 });
+
 // Modal sell to add price  
 router.post('/reserved/:rid', function(req, res, next){
     const rid = req.params.rid ;
@@ -173,6 +205,7 @@ router.post('/reserved/:rid', function(req, res, next){
 
 // 銷售紀錄 sell
 router.get('/sold', function (req, res, next) {
+    let currentPage = Number.parseInt(req.query.page) || 1;
     responses_db.once('value').then(function (snapshot) {
         return responses_db.orderByChild('responseTime').once('value');
     }).then(function (snapshot) {
@@ -183,11 +216,41 @@ router.get('/sold', function (req, res, next) {
             } 
         })
         sold_response_list.reverse();  
-    
+        
+        // 分頁
+        const totalResults = sold_response_list.length;
+        const perpage = 10;
+        const totalPages = Math.ceil(totalResults / perpage);
+
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+
+        // 這一頁中第一筆，這一頁中最後一頁   
+        const minItem = (currentPage * perpage) - perpage + 1
+        const maxItem = (currentPage * perpage);
+
+        const page_response_list = [];
+
+        sold_response_list.forEach(function (item, i) {
+            let itemNum = i + 1 // 因為預設是從 0 開始
+            if (itemNum >= minItem && itemNum <= maxItem) {
+                page_response_list.push(item);
+            }
+        })
+
+        const page = {
+            totalPages,
+            currentPage,
+            hasPre: currentPage > 1,
+            hasNext: currentPage < totalPages
+        }
+
         res.render('dashboard/sell_dashboard', {
             title: 'sold',
             active: 'sold',
-            sold_response_list,
+            sold_response_list: page_response_list,
+            page,
             moment
         });
     })
