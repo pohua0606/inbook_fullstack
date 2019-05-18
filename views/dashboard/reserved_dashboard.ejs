@@ -146,3 +146,23 @@
     </div>
 </div>
 <% } %>
+
+<!-- 做分頁 : Pagination -->
+<nav class="my-4" aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        <li class="page-item <% if(!page.hasPre){ %> disabled <% } %> ">
+            <a class="page-link" href="/dashboard/reserved?page=<%- page.currentPage - 1 %>" tabindex="-1">Previous</a>
+        </li>
+
+        <% for(var i = 1; i < page.totalPages + 1; i++) { %>
+        <li class="page-item <% if(i == page.currentPage){ %> active <% } %> ">
+            <a class="page-link" href="/dashboard/reserved?page=<%- i %>">
+                <%- i %>
+            </a>
+        </li>
+        <% } %>
+        <li class="page-item <% if(!page.hasNext){ %>disabled<% } %>">
+            <a class="page-link" href="/dashboard/reserved?page=<%- page.currentPage + 1 %>">Next</a>
+        </li>
+    </ul>
+</nav>
