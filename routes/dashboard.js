@@ -139,9 +139,15 @@ router.get('/reserved', function (req, res, next) {
         // console.log(datenow);
         snapshot.forEach(function (snapshot_child) {
             if ('reserved' === snapshot_child.val().status) {
-                if (datenow < snapshot_child.val().reserved_deadline) {
+                if (datenow <= snapshot_child.val().reserved_deadline) {
                     reserved_response_list.push(snapshot_child.val());
+                }else{
+                    firebaseAdmin_DB.ref('responses/' + snapshot_child.val().rid + '/status').set("cancelled");
                 }
+            }
+
+            if (datenow > snapshot_child.val().reserved_deadline) {
+                firebaseAdmin_DB.ref('responses/' + snapshot_child.val().rid + '/status').set("cancelled");
             }
         })
         reserved_response_list.reverse();
