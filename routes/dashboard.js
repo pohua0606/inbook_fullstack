@@ -70,7 +70,6 @@ router.get('/unans', function (req, res, next) {
 
 });
 
-
 // 歷史回覆 historical
 
 router.get('/historical', function (req, res, next) {
@@ -135,7 +134,6 @@ router.get('/historical', function (req, res, next) {
         });
     })
 });
-
 
 
 // 預約查詢 reserved : 這邊只要把 status 是 reserved 的放到一個新的陣列就好

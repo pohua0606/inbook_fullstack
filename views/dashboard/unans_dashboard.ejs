@@ -4,12 +4,20 @@
 <div class="row my-4 mx-5 justify-content-left">
     <div class="col-md-7">
         <div class="row">
+            <!-- <img src="/images/alex-loup-440761-unsplash.jpg" alt="" style="height: 200px"> -->
+            <% if(question_list.length === 0){ %>
+            <img style="height: 500px;position:relative; left: 20%" src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1567&q=80"
+                alt="">
+            <% } %>
+            
             <% for(var prop in question_list) { %>
             <div class="col-12">
                 <div class="card mb-4 border border-secondary">
                     <div class="card-body">
                         <div class="d-flex flex-row text-secondary">
-                            <div class="p-2"><span class="fa fa-clock-o"></span><%- moment(question_list[prop].askTime * 1000).format('YYYY / MM / DD') %></div>
+                            <div class="p-2"><span class="fa fa-clock-o"></span>
+                                <%- moment(question_list[prop].askTime * 1000).format('YYYY / MM / DD') %>
+                            </div>
                         </div>
                         <div>
                             <%-  striptags(question_list[prop].text_question).slice(0,149) %> ...
