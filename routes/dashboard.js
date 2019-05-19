@@ -57,7 +57,6 @@ router.get('/unans', function (req, res, next) {
             hasNext: currentPage < totalPages
         }
 
-
         res.render('dashboard/unans_dashboard', {
             title: 'unans',
             active: 'unans',
@@ -192,7 +191,7 @@ router.get('/reserved', function (req, res, next) {
     }).then(function (snapshot) {
         const reserved_response_list = [];
         var datenow = Math.floor(Date.now() / 1000)
-        console.log(datenow);
+        
         snapshot.forEach(function (snapshot_child) {
             if ('reserved' === snapshot_child.val().status) {
 
