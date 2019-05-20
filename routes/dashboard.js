@@ -177,6 +177,7 @@ router.get('/reserved/search', function (req, res, next) {
         .then(function (snapshot) {
             if (snapshot.val() < Serial_number) {
                 req.flash('error', '序號搜尋錯誤呦！')
+                res.redirect('/dashboard/reserved');
             } else {
                 responses_db.orderByChild('Serial_number').equalTo(Serial_number)
                     .once('value', function (snapshot) {
