@@ -156,7 +156,8 @@ router.get('/reserved', function (req, res, next) {
         })
         reserved_response_list.reverse();
         const search_result = req.flash('search_result')[0];
-        const search_error = req.flash('error');
+        const search_error = req.flash('error')[0];
+        console.log(search_error)
 
         res.render('dashboard/reserved_dashboard', {
             title: 'reserved',
