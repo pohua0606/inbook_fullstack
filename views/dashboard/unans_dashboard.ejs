@@ -4,12 +4,20 @@
 <div class="row my-4 mx-5 justify-content-left">
     <div class="col-md-7">
         <div class="row">
+            <!-- <img src="/images/alex-loup-440761-unsplash.jpg" alt="" style="height: 200px"> -->
+            <% if(question_list.length === 0){ %>
+            <img style="height: 500px;position:relative; left: 20%" src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1567&q=80"
+                alt="">
+            <% } %>
+            
             <% for(var prop in question_list) { %>
             <div class="col-12">
                 <div class="card mb-4 border border-secondary">
                     <div class="card-body">
                         <div class="d-flex flex-row text-secondary">
-                            <div class="p-2"><span class="fa fa-clock-o"></span><%- moment(question_list[prop].askTime * 1000).format('YYYY / MM / DD') %></div>
+                            <div class="p-2"><span class="fa fa-clock-o"></span>
+                                <%- moment(question_list[prop].askTime * 1000).format('YYYY / MM / DD') %>
+                            </div>
                         </div>
                         <div>
                             <%-  striptags(question_list[prop].text_question).slice(0,149) %> ...
@@ -37,24 +45,19 @@
 <!-- 做分頁 : Pagination -->
 <nav class="my-4" aria-label="Page navigation example">
     <ul class="pagination justify-content-center">
-        <li class="page-item disabled">
-            <a class="page-link" href="#" tabindex="-1">Previous</a>
+        <li class="page-item <% if(!page.hasPre){ %> disabled <% } %> ">
+            <a class="page-link" href="/dashboard/unans?page=<%- page.currentPage - 1 %>" tabindex="-1">Previous</a>
         </li>
 
-        <li class="page-item active">
-            <a class="page-link" href="#">
-                1
+        <% for(var i = 1; i < page.totalPages + 1; i++) { %>
+        <li class="page-item <% if(i == page.currentPage){ %> active <% } %> ">
+            <a class="page-link" href="/dashboard/unans?page=<%- i %>">
+                <%- i %>
             </a>
         </li>
-
-        <li class="page-item ">
-            <a class="page-link" href="#">
-                2
-            </a>
-        </li>
-
-        <li class="page-item ">
-            <a class="page-link" href="/?page=2">Next</a>
+        <% } %>
+        <li class="page-item <% if(!page.hasNext){ %>disabled<% } %>">
+            <a class="page-link" href="/dashboard/unans?page=<%- page.currentPage + 1 %>">Next</a>
         </li>
     </ul>
 </nav>

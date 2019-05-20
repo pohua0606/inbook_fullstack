@@ -26,16 +26,17 @@
     <div class="col-md-5">
         <div class="row">
             <form action="/dashboard/answer/<%- each_question.uid %>" method="post">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div class="col-12">
                     <div class="mb-2">回覆：</div>
                     <div>
-                        <textarea class="" name="" id="" cols="64" rows="3" style="height:300px;"></textarea>
+                        <textarea class="" name="text_answer" id="" cols="64" rows="3" style="height:300px;"></textarea>
                     </div>
                 </div>
                 <div class="col-12">
                     <div class="my-3"> 推薦書：</div>
                     <div class="d-flex flex-row justify-content-between">
-                        <input type="text" class="form-control border border-secondary border-top-0 border-left-0 border-right-0 bg-transparent"
+                        <input name="book" type="text" class="form-control border border-secondary border-top-0 border-left-0 border-right-0 bg-transparent"
                             style="width:50%">
                         <button type="submit" class="btn btn-outline-secondary"> 送出回覆 ! </button>
                     </div>

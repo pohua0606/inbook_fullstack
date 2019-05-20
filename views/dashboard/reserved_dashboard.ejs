@@ -1,210 +1,148 @@
 <% extend('../layouts/dashboard_layout') %>
 
-    <div class="container">
-        <input type="search" name="" id="" class="mb-3 form-control" style="width:20%" placeholder="Search...">
-        <table class="table border border-secondary">
-            <thead class="thead-dark">
-                <tr>
-                    <th scope="col"> 序號 </th>
-                    <th scope="col"> 時間 </th>
-                    <th scope="col"> 預約到期 </th>
-                    <th scope="col"> 書 </th>
-                    <th scope="col"> 預約 </th>
-                    <th scope="col"> 賣出 </th>
-                    <th scope="col"> 問題/回覆 </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">-12345</th>
-                    <td>2019/5/11</td>
-                    <td> 2019/5/14 </td>
-                    <td>優秀的綿羊</td>
-                    <td class="text-success"> <b>reserved</b> </td>
-                    <td><button class="btn btn-sm btn-outline-warning" data-toggle="modal" data-target="#checkout1">賣出
-                        </button></td>
-                    <td><a href="/dashboard/qanda" target="_blank"><button class="btn btn-sm btn-outline-warning"> Go ! </button></a></td>
-                </tr>
+<div class="container">
 
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>寫你</td>
-                    <td class="text-success"><b>reserved</b></td>
+    <form action="/dashboard/reserved/search">
+        <input type="search" name="Serial_number" class="mb-3 form-control d-inline-block" style="width:20%"
+            placeholder="Search...">
+        <button type="submit" class="btn btn-outline-secondary mb-1 ml-1"> 送出 </button>
+    </form>
 
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><a href="/dashboard/qanda"><button class="btn btn-sm btn-outline-warning"> Go ! </button></a> </td>
-                </tr>
-                <tr>
-                    <th scope="row">-123456</th>
-                    <td>2019/5/14</td>
-                    <td> 2019/5/17 </td>
-                    <td>分身</td>
-                    <td class="text-success"><b>reserved</b> </td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-123456</th>
-                    <td>2019/5/14</td>
-                    <td> 2019/5/17 </td>
-                    <td>你要如何衡量你的人生？</td>
-                    <td class="text-success"><b>reserved</b> </td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-123456</th>
-                    <td>2019/5/14</td>
-                    <td> 2019/5/17 </td>
-                    <td>被討厭的勇氣</td>
-                    <td class="text-success"> <b>reserved</b> </td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>讓大象飛</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>身為職業小說家</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>經濟學的40堂公開課</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>真確</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>獲利世代</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>賈伯斯傳</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>本質思考</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>異鄉人</td>
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-                <tr>
-                    <th scope="row">-1234567</th>
-                    <td>2019/5/13</td>
-                    <td> 2019/5/16 </td>
-                    <td>成長駭客</td>
-
-                    <td class="text-success"><b>reserved</b></td>
-
-                    <td><button class="btn btn-sm btn-outline-warning"> 賣出 </button></td>
-                    <td><button class="btn btn-sm btn-outline-warning"> Go ! </button></td>
-                </tr>
-
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Modal1 -->
-    <div class="modal fade bd-example-modal-lg" id="checkout1" tabindex="-1" role="dialog" aria-labelledby="checkout1Title"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-warning">
-                    <h5 class="modal-title" id="checkout1Title">結帳確認</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+    <% if(search_result) { %>
+    <table class="table border border-light">
+        <thead class="table-success">
+            <tr>
+                <th scope="col"> 序號 </th>
+                <th scope="col"> 時間 </th>
+                <th scope="col"> 預約到期 </th>
+                <th scope="col"> 書 </th>
+                <th scope="col"> 預約 </th>
+                <th scope="col"> 賣出 </th>
+                <th scope="col"> 問題/回覆 </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row"> 
+                    <%= search_result.Serial_number %>
+                </th>
+                <td>
+                    <%- moment(search_result.answerTime * 1000).format('YYYY / MM / DD') %>
+                </td>
+                <td>
+                    <%- moment(search_result.reserved_deadline * 1000).format('YYYY / MM / DD') %>
+                </td>
+                <td>
+                    <%- search_result.book %>
+                </td>
+                <td class="text-success">
+                    <b>
+                        <%- search_result.status %></b>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-outline-warning" data-toggle="modal" data-target="#<%- search_result.rid %>">賣出
                     </button>
-                </div>
-                <div class="container">
+                </td>
+                <td>
+                    <a href="/dashboard/qanda/<%- search_result.rid %>" target="_blank">
+                        <button class="btn btn-sm btn-outline-warning"> Go ! </button>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+
+    </table>
+    <% } %>
+    <table class="table border border-secondary">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col"> 序號 </th>
+                <th scope="col"> 時間 </th>
+                <th scope="col"> 預約到期 </th>
+                <th scope="col"> 書 </th>
+                <th scope="col"> 預約 </th>
+                <th scope="col"> 賣出 </th>
+                <th scope="col"> 問題/回覆 </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <% for(var prop in reserved_response_list) { %>
+            <tr>
+                <th scope="row"> 
+                    <%- reserved_response_list[prop].Serial_number %>
+                </th>
+                <td>
+                    <%- moment(reserved_response_list[prop].answerTime * 1000).format('YYYY / MM / DD') %>
+                </td>
+                <td>
+                    <%- moment(reserved_response_list[prop].reserved_deadline * 1000).format('YYYY / MM / DD') %>
+                </td>
+                <td>
+                    <%- reserved_response_list[prop].book %>
+                </td>
+                <td class="text-success"> <b>
+                        <%- reserved_response_list[prop].status %></b> </td>
+                <td><button class="btn btn-sm btn-outline-warning" data-toggle="modal" data-target="#<%- reserved_response_list[prop].rid %>">賣出
+                    </button></td>
+                <td><a href="/dashboard/qanda/<%- reserved_response_list[prop].rid %>" target="_blank"><button class="btn btn-sm btn-outline-warning">
+                            Go ! </button></a></td>
+            </tr>
+            <% } %>
+        </tbody>
+    </table>
+
+</div>
+
+<!-- Modal1 -->
+<% for(var prop in reserved_response_list) { %>
+<div class="modal fade bd-example-modal-lg" id="<%- reserved_response_list[prop].rid %>" tabindex="-1" role="dialog" aria-labelledby="checkout1Title"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-warning">
+                <h5 class="modal-title" id="checkout1Title">結帳確認</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="container">
+                <form action="/dashboard/reserved/<%- reserved_response_list[prop].rid %>" method="POST">
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-6">
                                 <small>序號</small>
-                                <h4 class="mt-3">-123456</h4>
+                                <h4 class="mt-3"> -
+                                    <%- reserved_response_list[prop].Serial_number %>
+                                </h4>
                             </div>
                             <div class="col-6">
                                 <small>書</small>
-                                <h4 class="mt-3">優秀的綿羊</h4>
+                                <h4 class="mt-3">
+                                    <%- reserved_response_list[prop].book %>
+                                </h4>
                             </div>
                         </div>
                         <div class="row mt-5">
                             <div class="col-6"></div>
                             <div class="col-6">
-                                <form>
-                                    <div class="form-group">
-                                        <label for="price" class="col-form-label">出售金額</label>
-                                        <input type="text" class="form-control border-top-0 border-right-0 border-left-0"
-                                            id="price">
-                                    </div>
-                                </form>
+
+                                <div class="form-group">
+                                    <label for="price" class="col-form-label">出售金額</label>
+                                    <input name="price" type="text" class="form-control border-top-0 border-right-0 border-left-0"
+                                        id="price">
+                                </div>
+
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
-                        <button type="button" class="btn btn-warning btn-lg px-4">結帳</button>
+                        <button type="submit" class="btn btn-warning btn-lg px-4">結帳</button>
                     </div>
-                </div>
-
+                </form>
             </div>
         </div>
     </div>
-
+</div>
+<% } %>
