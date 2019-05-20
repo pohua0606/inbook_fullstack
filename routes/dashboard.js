@@ -323,7 +323,7 @@ router.post('/answer/:uid', csrfProtection, function (req, res, next) {
             from : '書裡 | inbook <inbookinbook>',
             to : user_email,
             subject : '書裡回覆你的問題了',
-            html: `<p>${full_answer}你的序號為：${Serial_number} <br> 請點擊：<a href="https://dashboard.heroku.com/users/confirm/${response_key}">確認預約本書</a>，在${reserved_deadline_email}前來，開啟這趟自我探索的旅途。</p>`
+            html: `<p>${full_answer}你的序號為：${Serial_number} <br> 請點擊：<a href="https://inbookinbook.herokuapp.com/users/confirm/${response_key}">確認預約本書</a>，在${reserved_deadline_email}前來，開啟這趟自我探索的旅途。</p>`
         };
 
         transporter.sendMail(mailOptions, function(error, info){
