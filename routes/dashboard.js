@@ -9,11 +9,10 @@ var users_db = firebaseAdmin_DB.ref('users');
 var responses_db = firebaseAdmin_DB.ref('responses');
 var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
-
+var createError = require('http-errors');
 
 // 新問題 unans
 router.get('/unans', function (req, res, next) {
-
     let currentPage = Number.parseInt(req.query.page) || 1;
     users_db.once('value').then(function (snapshot) {
         return users_db.orderByChild('askTime').once('value');
@@ -157,8 +156,8 @@ router.get('/reserved', function (req, res, next) {
         reserved_response_list.reverse();
         const search_result = req.flash('search_result')[0];
         const search_error = req.flash('error')[0];
-        
-        
+
+
         res.render('dashboard/reserved_dashboard', {
             title: 'reserved',
             active: 'reserved',
@@ -364,6 +363,23 @@ router.get('/qanda/:rid', function (req, res, next) {
     })
 });
 
+
+router.use(function (req, res, next) {
+    next(createError(404));
+});
+
+router.use(function (err, req, res, next) {
+    
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error_dashboard', {
+        title: 'error'
+    });
+});
 
 
 module.exports = router;
