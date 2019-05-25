@@ -19,11 +19,17 @@
             <a class="navbar-brand" href="/dashboard/unans">
                 <img src="/images/inbook_logo_2.png" width="150" height="30" class="d-inline-block align-top" alt="">
             </a>
+            <div class="btn-group btn-group-sm mr-5" role="group">
+                <a href="/dashboard/reserved" class="btn btn-outline-secondary  "> 預約查詢 </a>
+                <a href="/dashboard/unans" class="btn btn-outline-secondary"> 新發問！ </a>
+                <a href="/dashboard/historical" class="btn btn-outline-secondary "> 歷史回覆 </a>
+                <a href="/dashboard/sold" class="btn btn-outline-secondary "> 銷售資料 </a>
+            </div>
         </div>
     </nav>
     <div class="container">
             <h1> <%= error.status %> <%= message %> </h1>
-            <h2><a href="/users/inbook">回到書裡頁面！</a></h2>
+            <h2><a href="/dashboard/unans">回到書裡後台！</a></h2>
             <h3>如果問題很大，快點聯絡書裡團隊！</h3>
             <h4>
                 email : inbookinbook@gmail.com

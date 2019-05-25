@@ -8,14 +8,13 @@ var moment = require('moment');
 var users_db = firebaseAdmin_DB.ref('users');
 var responses_db = firebaseAdmin_DB.ref('responses');
 var csrf = require('csurf');
-var csrfProtection = csrf({ cookie:true });
-
+var csrfProtection = csrf({ cookie: true });
+var createError = require('http-errors');
 
 // 新問題 unans
 router.get('/unans', function (req, res, next) {
-    
     let currentPage = Number.parseInt(req.query.page) || 1;
-    users_db.once('value').then(function (snapshot) {    
+    users_db.once('value').then(function (snapshot) {
         return users_db.orderByChild('askTime').once('value');
     }).then(function (snapshot) {
         const question_list = [];
@@ -73,7 +72,7 @@ router.get('/unans', function (req, res, next) {
 // 歷史回覆 historical
 
 router.get('/historical', function (req, res, next) {
-    
+
     let currentPage = Number.parseInt(req.query.page) || 1;
     const status = req.query.status || 'all';
     // 抓 route 的query 參數
@@ -84,18 +83,18 @@ router.get('/historical', function (req, res, next) {
         const response_list = [];
         snapshot.forEach(function (snapshot_child) {
             // 對應 query 抓的狀態參數與資料庫中每筆資料的 status
-            if(snapshot_child.val().status === status){
+            if (snapshot_child.val().status === status) {
                 response_list.push(snapshot_child.val());
             }
             // 如果沒有 query 參數就把狀態參數 all 
             // 把全部資料都丟到 list 中
-            else if(status == 'all'){
+            else if (status == 'all') {
                 response_list.push(snapshot_child.val());
             }
         })
-        
-        response_list.reverse();   
-        
+
+        response_list.reverse();
+
         // 分頁
         const totalResults = response_list.length;
         const perpage = 10;
@@ -128,7 +127,7 @@ router.get('/historical', function (req, res, next) {
         res.render('dashboard/historical_dashboard', {
             title: 'historical',
             active: 'historical',
-            response_list: page_response_list, 
+            response_list: page_response_list,
             moment,
             page
         });
@@ -143,20 +142,21 @@ router.get('/reserved', function (req, res, next) {
     }).then(function (snapshot) {
         const reserved_response_list = [];
         snapshot.forEach(function (snapshot_child) {
-            
+
             // deadline 逾期自動化 跳掉 canceled
-            if(Math.floor((Date.now() / 1000)) > snapshot_child.val().reserved_deadline)
-            {
+            if (Math.floor((Date.now() / 1000)) > snapshot_child.val().reserved_deadline) {
                 responses_db.child(snapshot_child.val().rid).update({
-                    status : 'canceled'
+                    status: 'canceled'
                 })
             }
             if ('reserved' === snapshot_child.val().status) {
                 reserved_response_list.push(snapshot_child.val());
-            } 
+            }
         })
-        reserved_response_list.reverse();  
+        reserved_response_list.reverse();
         const search_result = req.flash('search_result')[0];
+        const search_error = req.flash('error')[0];
+
 
         res.render('dashboard/reserved_dashboard', {
             title: 'reserved',
@@ -164,38 +164,48 @@ router.get('/reserved', function (req, res, next) {
             reserved_response_list,
             moment,
             search_result,
+            search_error
         });
     })
 });
 
 // Search in reserved
 router.get('/reserved/search', function (req, res, next) {
-    const Serial_number = Number.parseInt(req.query.Serial_number) ;
-    responses_db.orderByChild('Serial_number').equalTo(Serial_number)
-    .once('value', function(snapshot){
-        if('reserved' === Object.values(snapshot.val())[0].status){
-            var search_result = Object.values(snapshot.val())[0];
-        }
-        if(search_result){
-            req.flash('search_result', search_result);
-        }
-        res.redirect('/dashboard/reserved')
-    })
-    
+    const Serial_number = Number.parseInt(req.query.Serial_number);
+
+    firebaseAdmin_DB.ref('Serial_number').once('value')
+        .then(function (snapshot) {
+            if (snapshot.val() < Serial_number) {
+                req.flash('error', '序號搜尋錯誤呦！')
+                res.redirect('/dashboard/reserved');
+            } else {
+                responses_db.orderByChild('Serial_number').equalTo(Serial_number)
+                    .once('value', function (snapshot) {
+                        if ('reserved' === Object.values(snapshot.val())[0].status) {
+                            var search_result = Object.values(snapshot.val())[0];
+                        }
+                        if (search_result) {
+                            req.flash('search_result', search_result);
+                        }
+                        res.redirect('/dashboard/reserved')
+                    })
+            }
+        })
+
     // 錯誤頁面跳回原來頁面
-       
+
 
 });
 
 // Modal sell to add price  
-router.post('/reserved/:rid', function(req, res, next){
-    const rid = req.params.rid ;
-    var price = req.body.price ;
-     
+router.post('/reserved/:rid', function (req, res, next) {
+    const rid = req.params.rid;
+    var price = req.body.price;
+
     responses_db.child(rid).update({
-        sold_time : Math.floor(Date.now() / 1000),
-        price : price,
-        status : 'sold'
+        sold_time: Math.floor(Date.now() / 1000),
+        price: price,
+        status: 'sold'
     })
     res.redirect('/dashboard/reserved')
 })
@@ -211,10 +221,10 @@ router.get('/sold', function (req, res, next) {
         snapshot.forEach(function (snapshot_child) {
             if ('sold' === snapshot_child.val().status) {
                 sold_response_list.push(snapshot_child.val());
-            } 
+            }
         })
-        sold_response_list.reverse();  
-        
+        sold_response_list.reverse();
+
         // 分頁
         const totalResults = sold_response_list.length;
         const perpage = 10;
@@ -280,20 +290,20 @@ router.get('/answer/:uid', csrfProtection, function (req, res, next) {
 
 // Post 老闆回覆
 router.post('/answer/:uid', csrfProtection, function (req, res, next) {
-    
+
     const uid = req.params.uid;
     var each_response = responses_db.push();
     var response_key = each_response.key;
-    
+
     users_db.child(uid).update({
-        answered : 'yes'
+        answered: 'yes'
     })
-    
+
     firebaseAdmin_DB.ref('users/' + uid).once('value').then(snapshot => {
         const text_question = snapshot.val().text_question;
         const Serial_number = snapshot.val().Serial_number;
-        const user_email = snapshot.val().email ;
-        
+        const user_email = snapshot.val().email;
+
         each_response.set({
             rid: response_key,
             uid: uid,
@@ -305,29 +315,29 @@ router.post('/answer/:uid', csrfProtection, function (req, res, next) {
             reserved_deadline: Math.floor((Date.now() / 1000) + (86400 * 3)),
             Serial_number: Serial_number
         })
-        
+
         var transporter = nodemailer.createTransport({
-            service : 'Gmail',
+            service: 'Gmail',
             auth: {
-                user : 'inbookinbook@gmail.com',
-                pass : 'KenJerryAaronJimmy'
+                user: 'inbookinbook@gmail.com',
+                pass: 'KenJerryAaronJimmy'
             }
         });
         var reserved_deadline_email = moment().add(3, 'days').format('YYYY / MM / DD');
         var boss_answer = req.body.text_answer;
-        var default_answer = 
-        '<br><br>謝謝你願意傾聽自己，將自己的想法書寫下來，<br>在面對生活的難題時，能真正解決問題的，<br>不是書裡，而是梳理。<br>我們準備了一本好書給你，期待陪你踏上這趟旅程。<br>'
+        var default_answer =
+            '<br><br>謝謝你願意傾聽自己，將自己的想法書寫下來，<br>在面對生活的難題時，能真正解決問題的，<br>不是書裡，而是梳理。<br>我們準備了一本好書給你，期待陪你踏上這趟旅程。<br>'
         var full_answer = boss_answer + '<br>' + default_answer + '<br>';
 
         var mailOptions = {
-            from : '書裡 | inbook <inbookinbook>',
-            to : user_email,
-            subject : '書裡回覆你的問題了',
-            html: `<p>${full_answer}請點擊：<a href="http://localhost:3000/users/confirm/${response_key}">確認預約本書</a>，在${reserved_deadline_email}前來，開啟這趟自我探索的旅途。</p>`
+            from: '書裡 | inbook <inbookinbook>',
+            to: user_email,
+            subject: '書裡回覆你的問題了',
+            html: `<p>${full_answer}你的序號為：${Serial_number} <br> 請點擊：<a href="localhost:3000/users/confirm/${response_key}">確認預約本書</a>，在${reserved_deadline_email}前來，開啟這趟自我探索的旅途。</p>`
         };
 
-        transporter.sendMail(mailOptions, function(error, info){
-            if(error){
+        transporter.sendMail(mailOptions, function (error, info) {
+            if (error) {
                 console.log(error);
             }
         })
@@ -344,7 +354,7 @@ router.get('/qanda/:rid', function (req, res, next) {
         return responses_db.child(rid).once('value');
     }).then(function (snapshot) {
         const each_qanda = snapshot.val();
-        
+
         res.render('dashboard/q_and_a', {
             title: 'qanda',
             each_qanda,
@@ -353,6 +363,23 @@ router.get('/qanda/:rid', function (req, res, next) {
     })
 });
 
+
+router.use(function (req, res, next) {
+    next(createError(404));
+});
+
+router.use(function (err, req, res, next) {
+    
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+    // render the error page
+    res.status(err.status || 500);
+    res.render('error_dashboard', {
+        title: 'error'
+    });
+});
 
 
 module.exports = router;

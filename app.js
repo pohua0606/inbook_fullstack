@@ -32,19 +32,28 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+
+// 這邊要放一個登入的 middleware，要登入才能進入 dashboard 
+
 app.use('/dashboard', dashboardRouter);
 
+
+// 如果上面的路由（首頁, users, dashboard）找不到
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
 // error handler
+// 是因為 跑app.js 所以如果有 error 就直接跳這嗎？
+// error 是不是要分成兩個路徑 user 和 dashboard
+
 app.use(function(err, req, res, next) {
+  
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
+  
   // render the error page
   res.status(err.status || 500);
   res.render('error', {

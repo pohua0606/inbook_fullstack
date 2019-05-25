@@ -6,6 +6,7 @@ var responses_db = firebaseAdmin_DB.ref('responses');
 var moment = require('moment');
 var csrf = require('csurf');
 var csrfProtection = csrf({ cookie:true });
+var createError = require('http-errors');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -14,7 +15,9 @@ router.get('/', function (req, res, next) {
 
 // user - inbook
 router.get('/inbook', csrfProtection, function (req, res, next) {
-  res.render('users/user', { csrfToken: req.csrfToken() });
+
+    res.render('users/user', { csrfToken: req.csrfToken() });
+    
 });
 
 // user - feedback
@@ -80,5 +83,23 @@ router.post('/question/create', csrfProtection, function (req, res, next) {
   })
 
 })
+
+router.use(function(req, res, next) {
+  next(createError(404));
+});
+
+router.use(function(err, req, res, next) {
+  // set locals, only providing error in development
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+  
+  // render the error page
+  res.status(err.status || 500);
+  res.render('error', {
+    title : 'error'
+  });
+});
+
+
 
 module.exports = router;

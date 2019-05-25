@@ -8,6 +8,12 @@
         <button type="submit" class="btn btn-outline-secondary mb-1 ml-1"> 送出 </button>
     </form>
 
+    <% if(search_error) { %>
+        <div class="alert alert-warning">
+            <%- search_error %>
+        </div>
+    <% } %>
+
     <% if(search_result) { %>
     <table class="table border border-light">
         <thead class="table-success">
