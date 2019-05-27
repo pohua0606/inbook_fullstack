@@ -157,7 +157,6 @@ router.get('/reserved', function (req, res, next) {
         const search_result = req.flash('search_result')[0];
         const search_error = req.flash('error')[0];
 
-
         res.render('dashboard/reserved_dashboard', {
             title: 'reserved',
             active: 'reserved',
@@ -171,35 +170,46 @@ router.get('/reserved', function (req, res, next) {
 
 // Search in reserved
 router.get('/reserved/search', function (req, res, next) {
+
+    
+
     const Search_Serial_number = Number.parseInt(req.query.Serial_number);
+    
+    if (Search_Serial_number !== 0 && typeof Search_Serial_number == 'number') {
+        // 還要增加如果這個序號沒有在資料庫中的錯誤，這個錯誤是不是不應該存在？
+        firebaseAdmin_DB.ref('Serial_number').once('value')
+            .then(function (snapshot) {
 
-    // 還要增加如果這個序號沒有在資料庫中的錯誤，這個錯誤是不是不應該存在？
+                // snapshot.val() 是資料庫中 Serial_number 的值    
+                if (snapshot.val() <= Search_Serial_number) {
+                    req.flash('error', '序號搜尋錯誤呦！');
+                    res.redirect('/dashboard/reserved');
+                } else {
+                    responses_db.orderByChild('Serial_number').equalTo(Search_Serial_number)
+                        .once('value', function (snapshot) {
 
-    firebaseAdmin_DB.ref('Serial_number').once('value')
-        .then(function (snapshot) {
-            // snapshot.val() 是資料庫中 Serial_number 的值
-            if (snapshot.val() <= Search_Serial_number) {
-                req.flash('error', '序號搜尋錯誤呦！')
-                res.redirect('/dashboard/reserved');
-            } else {
-                responses_db.orderByChild('Serial_number').equalTo(Search_Serial_number)
-                    .once('value', function (snapshot) {
-                        if ('reserved' === Object.values(snapshot.val())[0].status) {
-                            var search_result = Object.values(snapshot.val())[0];
-                        }
-                        if (search_result) {
-                            req.flash('search_result', search_result);
-                        }
-                        res.redirect('/dashboard/reserved')
-                    })
-            }
-        })
-    // Do i need to catch error here ???
+                            // 如果這個序號有 user 問題，但沒有老闆 response，會報錯
 
-    // 錯誤頁面跳回原來頁面
+                            if ('reserved' === Object.values(snapshot.val())[0].status) {
+                                var search_result = Object.values(snapshot.val())[0];
+                            }
+
+                            if (search_result) {
+                                req.flash('search_result', search_result);
+                            }
+
+                            res.redirect('/dashboard/reserved')
+                        })
+                }
+            })
+        // Do i need to catch error here ???
+    } else {
+        req.flash('error', '序號搜尋錯誤呦！');
+        res.redirect('/dashboard/reserved');
+    }
 
 
-});
+})
 
 // Modal sell to add price  
 router.post('/reserved/:rid', function (req, res, next) {
