@@ -14,9 +14,11 @@ var createError = require('http-errors');
 // 新問題 unans
 router.get('/unans', function (req, res, next) {
     let currentPage = Number.parseInt(req.query.page) || 1;
+    
     users_db.once('value').then(function (snapshot) {
         return users_db.orderByChild('askTime').once('value');
     }).then(function (snapshot) {
+        
         const question_list = [];
         snapshot.forEach(function (snapshot_child) {
             if ('no' === snapshot_child.val().answered) {
@@ -24,7 +26,6 @@ router.get('/unans', function (req, res, next) {
             }
         })
         // question_list.reverse();
-
 
         // 分頁
         const totalResults = question_list.length;
