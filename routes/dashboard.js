@@ -171,42 +171,52 @@ router.get('/reserved', function (req, res, next) {
 // Search in reserved
 router.get('/reserved/search', function (req, res, next) {
 
-    
+    if (!isNaN(req.query.Serial_number)) {
+        // 先看 Search 輸入的是否是數值，如果是數值，才可以進行搜尋
+        const Search_Serial_number = Number.parseInt(req.query.Serial_number);
+        // 搜尋序號不能是 0 ，且輸入的數值型態必須是 number
+        if (Search_Serial_number !== 0 && typeof Search_Serial_number == 'number') {
+            // 還要增加如果這個序號沒有在資料庫中的錯誤，這個錯誤是不是不應該存在？
+            firebaseAdmin_DB.ref('Serial_number').once('value')
+                .then(function (snapshot) {
+                    // snapshot.val() 是資料庫中 Serial_number 的值
+                    // 輸入搜尋的值不可能大於資料庫中 Serial_number 
+                    if (snapshot.val() <= Search_Serial_number) {
+                        req.flash('error', '序號搜尋錯誤呦！');
+                        res.redirect('/dashboard/reserved');
+                    } else {
+                        responses_db.orderByChild('Serial_number').equalTo(Search_Serial_number)
+                            .once('value', function (snapshot) {
+                                // 如果在 responses 資料庫中有存在這個值，才會去撈資料
+                                if (snapshot.exists()) {
+                                    // 如果這個序號有 user 問題，但沒有老闆 response，會報錯
+                                    if ('reserved' === Object.values(snapshot.val())[0].status) {
+                                        var search_result = Object.values(snapshot.val())[0];
+                                    }
 
-    const Search_Serial_number = Number.parseInt(req.query.Serial_number);
-    
-    if (Search_Serial_number !== 0 && typeof Search_Serial_number == 'number') {
-        // 還要增加如果這個序號沒有在資料庫中的錯誤，這個錯誤是不是不應該存在？
-        firebaseAdmin_DB.ref('Serial_number').once('value')
-            .then(function (snapshot) {
-
-                // snapshot.val() 是資料庫中 Serial_number 的值    
-                if (snapshot.val() <= Search_Serial_number) {
-                    req.flash('error', '序號搜尋錯誤呦！');
-                    res.redirect('/dashboard/reserved');
-                } else {
-                    responses_db.orderByChild('Serial_number').equalTo(Search_Serial_number)
-                        .once('value', function (snapshot) {
-
-                            // 如果這個序號有 user 問題，但沒有老闆 response，會報錯
-
-                            if ('reserved' === Object.values(snapshot.val())[0].status) {
-                                var search_result = Object.values(snapshot.val())[0];
-                            }
-
-                            if (search_result) {
-                                req.flash('search_result', search_result);
-                            }
-
-                            res.redirect('/dashboard/reserved')
-                        })
-                }
-            })
-        // Do i need to catch error here ???
+                                    if (search_result) {
+                                        req.flash('search_result', search_result);
+                                    }
+                                    res.redirect('/dashboard/reserved')
+                                } else {
+                                    req.flash('error', '序號搜尋錯誤呦！');
+                                    res.redirect('/dashboard/reserved');
+                                }
+                            })
+                    }
+                })
+            // Do i need to catch error here ???
+        } else {
+            req.flash('error', '序號搜尋錯誤呦！');
+            res.redirect('/dashboard/reserved');
+        }
     } else {
         req.flash('error', '序號搜尋錯誤呦！');
         res.redirect('/dashboard/reserved');
     }
+
+// flash 錯誤顯示與重新導向重複太多次，可以考慮寫成 function
+
 
 
 })
