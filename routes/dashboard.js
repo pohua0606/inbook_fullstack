@@ -13,61 +13,68 @@ var createError = require('http-errors');
 
 // 新問題 unans
 router.get('/unans', function (req, res, next) {
+
     let currentPage = Number.parseInt(req.query.page) || 1;
-    
+
     users_db.once('value').then(function (snapshot) {
         return users_db.orderByChild('askTime').once('value');
-    }).then(function (snapshot) {
-        
-        const question_list = [];
-        snapshot.forEach(function (snapshot_child) {
-            if ('no' === snapshot_child.val().answered) {
-                question_list.push(snapshot_child.val());
-            }
-        })
-        // question_list.reverse();
-
-        // 分頁
-        const totalResults = question_list.length;
-        const perpage = 3;
-        const totalPages = Math.ceil(totalResults / perpage);
-
-        if (currentPage > totalPages) {
-            currentPage = totalPages;
-        }
-
-        // 這一頁中第一筆，這一頁中最後一頁   
-        const minItem = (currentPage * perpage) - perpage + 1
-        const maxItem = (currentPage * perpage);
-
-        const page_question_list = [];
-
-        question_list.forEach(function (item, i) {
-            let itemNum = i + 1 // 因為預設是從 0 開始
-            if (itemNum >= minItem && itemNum <= maxItem) {
-                page_question_list.push(item);
-            }
-        })
-
-        const page = {
-            totalPages,
-            currentPage,
-            hasPre: currentPage > 1,
-            hasNext: currentPage < totalPages
-        }
-
-        res.render('dashboard/unans_dashboard', {
-            title: 'unans',
-            active: 'unans',
-            question_list: page_question_list,
-            page,
-            moment,
-            striptags
-        });
     })
+    .then(function (snapshot) {
+
+            const question_list = [];
+            snapshot.forEach(function (snapshot_child) {
+                if ('no' === snapshot_child.val().answered) {
+                    question_list.push(snapshot_child.val());
+                }
+            })
+            // question_list.reverse();
+
+            // 分頁
+            const totalResults = question_list.length;
+            const perpage = 3;
+            const totalPages = Math.ceil(totalResults / perpage);
+
+            if (currentPage > totalPages) {
+                currentPage = totalPages;
+            }
+
+            // 這一頁中第一筆，這一頁中最後一頁   
+            const minItem = (currentPage * perpage) - perpage + 1
+            const maxItem = (currentPage * perpage);
+
+            const page_question_list = [];
+
+            question_list.forEach(function (item, i) {
+                let itemNum = i + 1 // 因為預設是從 0 開始
+                if (itemNum >= minItem && itemNum <= maxItem) {
+                    page_question_list.push(item);
+                }
+            })
+
+            const page = {
+                totalPages,
+                currentPage,
+                hasPre: currentPage > 1,
+                hasNext: currentPage < totalPages
+            }
+
+            res.render('dashboard/unans_dashboard', {
+                title: 'unans',
+                active: 'unans',
+                question_list: page_question_list,
+                page,
+                moment,
+                striptags
+            });
+        })
+        .catch(function (error) {
+            console.log('Message : ', error.message);
+            console.log('Stack : ', error.stack);
+            res.redirect('/dashboard/unans');
+        })
+
     // 把 users 物件，按照時間排序，然後用迴圈放到新的陣列裡面。
     // 到 ejs 上，將陣列用迴圈讀出呈現。
-
 });
 
 // 歷史回覆 historical
@@ -76,11 +83,14 @@ router.get('/historical', function (req, res, next) {
 
     let currentPage = Number.parseInt(req.query.page) || 1;
     const status = req.query.status || 'all';
+
     // 抓 route 的query 參數
     // 如果沒有 query 參數就把狀態參數命名成 all
+
     responses_db.once('value').then(function (snapshot) {
         return responses_db.orderByChild('responseTime').once('value');
-    }).then(function (snapshot) {
+    })
+    .then(function (snapshot) {
         const response_list = [];
         snapshot.forEach(function (snapshot_child) {
             // 對應 query 抓的狀態參數與資料庫中每筆資料的 status
@@ -133,14 +143,21 @@ router.get('/historical', function (req, res, next) {
             page
         });
     })
+    .catch(function (error) {
+        console.log('Message : ', error.message);
+        console.log('Stack : ', error.stack);
+        res.redirect('/dashboard/historical');
+    })
 });
+
 
 
 // 預約查詢 reserved : 這邊只要把 status 是 reserved 的放到一個新的陣列就好
 router.get('/reserved', function (req, res, next) {
     responses_db.once('value').then(function (snapshot) {
         return responses_db.orderByChild('responseTime').once('value');
-    }).then(function (snapshot) {
+    })
+    .then(function (snapshot) {
         const reserved_response_list = [];
         snapshot.forEach(function (snapshot_child) {
 
@@ -167,63 +184,74 @@ router.get('/reserved', function (req, res, next) {
             search_error
         });
     })
+    .catch(function (error) {
+        console.log('Message : ', error.message);
+        console.log('Stack : ', error.stack);
+        res.redirect('/dashboard/reserved');
+    })
 });
+
 
 // Search in reserved
 router.get('/reserved/search', function (req, res, next) {
 
-    if (!isNaN(req.query.Serial_number)) {
-        // 先看 Search 輸入的是否是數值，如果是數值，才可以進行搜尋
-        const Search_Serial_number = Number.parseInt(req.query.Serial_number);
-        // 搜尋序號不能是 0 ，且輸入的數值型態必須是 number
-        if (Search_Serial_number !== 0 && typeof Search_Serial_number == 'number') {
-            // 還要增加如果這個序號沒有在資料庫中的錯誤，這個錯誤是不是不應該存在？
-            firebaseAdmin_DB.ref('Serial_number').once('value')
-                .then(function (snapshot) {
-                    // snapshot.val() 是資料庫中 Serial_number 的值
-                    // 輸入搜尋的值不可能大於資料庫中 Serial_number 
-                    if (snapshot.val() <= Search_Serial_number) {
-                        req.flash('error', '序號搜尋錯誤呦！');
-                        res.redirect('/dashboard/reserved');
-                    } else {
-                        responses_db.orderByChild('Serial_number').equalTo(Search_Serial_number)
-                            .once('value', function (snapshot) {
-                                // 如果在 responses 資料庫中有存在這個值，才會去撈資料
-                                if (snapshot.exists()) {
-                                    // 如果這個序號有 user 問題，但沒有老闆 response，會報錯
-                                    if ('reserved' === Object.values(snapshot.val())[0].status) {
-                                        var search_result = Object.values(snapshot.val())[0];
-                                    }
-
-                                    if (search_result) {
-                                        req.flash('search_result', search_result);
-                                    }
-                                    res.redirect('/dashboard/reserved')
-                                } else {
-                                    req.flash('error', '序號搜尋錯誤呦！');
-                                    res.redirect('/dashboard/reserved');
+    // if (!isNaN(req.query.Serial_number)) {
+    // 先看 Search 輸入的是否是數值，如果是數值，才可以進行搜尋
+    const Search_Serial_number = Number.parseInt(req.query.Serial_number);
+    // 搜尋序號不能是 0 ，且輸入的數值型態必須是 number
+    if (Search_Serial_number !== 0 && typeof Search_Serial_number == 'number') {
+        // 還要增加如果這個序號沒有在資料庫中的錯誤，這個錯誤是不是不應該存在？
+        firebaseAdmin_DB.ref('Serial_number').once('value')
+            .then(function (snapshot) {
+                // snapshot.val() 是資料庫中 Serial_number 的值
+                // 輸入搜尋的值不可能大於資料庫中 Serial_number 
+                if (snapshot.val() <= Search_Serial_number) {
+                    req.flash('error', '序號搜尋錯誤呦！');
+                    res.redirect('/dashboard/reserved');
+                } else {
+                    responses_db.orderByChild('Serial_number').equalTo(Search_Serial_number)
+                        .once('value', function (snapshot) {
+                            // 如果在 responses 資料庫中有存在這個值，才會去撈資料
+                            if (snapshot.exists()) {
+                                // 如果這個序號有 user 問題，但沒有老闆 response，會報錯
+                                if ('reserved' === Object.values(snapshot.val())[0].status) {
+                                    var search_result = Object.values(snapshot.val())[0];
                                 }
-                            })
-                    }
-                })
-            // Do i need to catch error here ???
-        } else {
-            req.flash('error', '序號搜尋錯誤呦！');
-            res.redirect('/dashboard/reserved');
-        }
+
+                                if (search_result) {
+                                    req.flash('search_result', search_result);
+                                }
+                                res.redirect('/dashboard/reserved')
+                            } else {
+                                req.flash('error', '序號搜尋錯誤呦！');
+                                res.redirect('/dashboard/reserved');
+                            }
+                        })
+                }
+            })
+            .catch(function (error) {
+                console.log('Message : ', error.message);
+                console.log('Stack : ', error.stack);
+                req.flash('error', '序號搜尋錯誤呦！');
+                res.redirect('/dashboard/reserved');
+            })
+
+        // Do i need to catch error here ???
     } else {
         req.flash('error', '序號搜尋錯誤呦！');
         res.redirect('/dashboard/reserved');
     }
+    // } else {
+    //     req.flash('error', '序號搜尋錯誤呦！');
+    //     res.redirect('/dashboard/reserved');
+    // }
 
-// flash 錯誤顯示與重新導向重複太多次，可以考慮寫成 function
-
-
-
+    // flash 錯誤顯示與重新導向重複太多次，可以考慮寫成 function
 })
 
 // Modal sell to add price  
 router.post('/reserved/:rid', function (req, res, next) {
+    
     const rid = req.params.rid;
     var price = req.body.price;
 
@@ -232,16 +260,23 @@ router.post('/reserved/:rid', function (req, res, next) {
         price: price,
         status: 'sold'
     })
+    .catch(function (error) {
+        console.log('Message : ', error.message);
+        console.log('Stack : ', error.stack);
+        res.redirect('/dashboard/reserved');
+    })
+    
     res.redirect('/dashboard/reserved')
 })
 
 
-// 銷售紀錄 sell
+// 銷售紀錄 sold
 router.get('/sold', function (req, res, next) {
     let currentPage = Number.parseInt(req.query.page) || 1;
     responses_db.once('value').then(function (snapshot) {
         return responses_db.orderByChild('responseTime').once('value');
-    }).then(function (snapshot) {
+    })
+    .then(function (snapshot) {
         const sold_response_list = [];
         snapshot.forEach(function (snapshot_child) {
             if ('sold' === snapshot_child.val().status) {
@@ -287,6 +322,11 @@ router.get('/sold', function (req, res, next) {
             moment
         });
     })
+    .catch(function (error) {
+        console.log('Message : ', error.message);
+        console.log('Stack : ', error.stack);
+        res.redirect('/dashboard/sold');
+    })
 });
 
 
@@ -300,7 +340,8 @@ router.get('/answer/:uid', csrfProtection, function (req, res, next) {
     const uid = req.params.uid;
     users_db.once('value').then(function (snapshot) {
         return users_db.child(uid).once('value');
-    }).then(function (snapshot) {
+    })
+    .then(function (snapshot) {
         const each_question = snapshot.val();
         res.render('dashboard/answer', {
             title: 'answer',
@@ -309,7 +350,11 @@ router.get('/answer/:uid', csrfProtection, function (req, res, next) {
             csrfToken: req.csrfToken()
         });
     })
-
+    .catch(function (error) {
+        console.log('Message : ', error.message);
+        console.log('Stack : ', error.stack);
+        res.redirect('/answer/:uid');
+    })
 });
 
 
@@ -367,6 +412,12 @@ router.post('/answer/:uid', csrfProtection, function (req, res, next) {
             }
         })
     })
+    .catch(function (error) {
+        console.log('Message : ', error.message);
+        console.log('Stack : ', error.stack);
+        res.redirect('/dashboard/unans');
+    })
+
     res.redirect('/dashboard/unans');
 });
 
@@ -377,7 +428,8 @@ router.get('/qanda/:rid', function (req, res, next) {
     const rid = req.params.rid;
     responses_db.once('value').then(function (snapshot) {
         return responses_db.child(rid).once('value');
-    }).then(function (snapshot) {
+    })
+    .then(function (snapshot) {
         const each_qanda = snapshot.val();
 
         res.render('dashboard/q_and_a', {
@@ -385,6 +437,11 @@ router.get('/qanda/:rid', function (req, res, next) {
             each_qanda,
             moment
         });
+    })
+    .catch(function (error) {
+        console.log('Message : ', error.message);
+        console.log('Stack : ', error.stack);
+        res.redirect('/dashboard/unans');
     })
 });
 
