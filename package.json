@@ -6,7 +6,7 @@
     "node": "10.x"
   },
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "node ./bin/www"
   },
   "dependencies": {
     "connect-flash": "^0.1.1",
